@@ -1,0 +1,37 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/ApplicationFlow.qml</file>
+        <file>qml/BarChart.qml</file>
+        <file>qml/CellDelegate.qml</file>
+        <file>qml/ExploreScreen.qml</file>
+        <file>qml/FlowLamp.qml</file>
+        <file>qml/FlowScreen.qml</file>
+        <file>qml/Introduction.qml</file>
+        <file>qml/main.qml</file>
+        <file>qml/MetricSelectDelegate.qml</file>
+        <file>qml/MetricSelectScreen.qml</file>
+        <file>qml/RoundedImage.qml</file>
+        <file>qml/ScenarioDelegate.qml</file>
+        <file>qml/ScenarioSelectScreen.qml</file>
+        <file>qml/TransparentRectangle.qml</file>
+        <file>qml/UIRect.qml</file>
+        <file>qml/utility.js</file>
+        <file>images/67859_blur_25.webp</file>
+        <file>images/geothermal_bores_conus.jpg</file>
+        <file>images/geothermal_bores_conus.webp</file>
+        <file>images/NREL-logo-reversed.png</file>
+        <file>images/NREL-logo.png</file>
+        <file>images/shadow_r10.webp</file>
+        <file>images/shadow.pxd</file>
+        <file>images/shadow.webp</file>
+        <file>qml/DebugCellModel.qml</file>
+        <file>qml/DebugMetricModel.qml</file>
+        <file>qml/DebugScenarioModel.qml</file>
+        <file>fonts/fa_solid_6.otf</file>
+        <file>qtquickcontrols2.conf</file>
+        <file>fonts/Roboto-Regular.ttf</file>
+        <file>fonts/Roboto-Bold.ttf</file>
+        <file>fonts/Roboto-BoldItalic.ttf</file>
+        <file>fonts/Roboto-Italic.ttf</file>
+    </qresource>
+</RCC>

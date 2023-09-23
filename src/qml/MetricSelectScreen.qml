@@ -1,0 +1,99 @@
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 2.15
+
+FlowScreen {
+    id: item1
+
+    header_text: "Select metrics for this scenario"
+
+    RowLayout {
+        anchors.fill: parent
+
+        UIRect {
+            Layout.margins: 10
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            //background_opacity: .3
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 10
+
+                Label {
+                    text: "Metrics"
+                    font.bold: true
+                    Layout.fillWidth: true
+                }
+                Label {
+                    text: "A description of metrics is here, and why you should care"
+                    wrapMode: Text.WordWrap
+                    Layout.fillWidth: true
+                }
+
+                ListView {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    clip: true
+
+                    spacing: 4
+
+                    delegate: MetricSelectDelegate {
+                        height: 64
+                        width: ListView.view.width
+
+                        metric_name: model.name
+                        metric_description: model.description
+                        metric_image: model.image
+                    }
+
+                    model: DebugMetricModel {}
+                }
+            }
+        }
+
+        UIRect {
+            Layout.margins: 10
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            //background_opacity: .3
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 10
+
+                Label {
+                    text: "Technologies"
+                    font.bold: true
+                    Layout.fillWidth: true
+                }
+                Label {
+                    text: "A description of technologies is here, and why you should care"
+                    wrapMode: Text.WordWrap
+                    Layout.fillWidth: true
+                }
+
+                ListView {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    clip: true
+
+                    spacing: 4
+
+                    delegate: MetricSelectDelegate {
+                        height: 64
+                        width: ListView.view.width
+
+                        metric_name: model.name
+                        metric_description: model.description
+                        metric_image: model.image
+                    }
+
+                    model: DebugMetricModel {}
+                }
+            }
+        }
+    }
+}
