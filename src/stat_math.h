@@ -22,6 +22,12 @@ struct BoxplotResult {
     QVector<float> outliers;
 };
 
+struct ViolinResult {
+    QVector<float> x, y;
+};
+
 double compute_std_deviation(std::span<float> data);
 
 BoxplotResult compute_boxplot(std::span<float> data);
+
+ViolinResult compute_violin(std::span<float> data);
