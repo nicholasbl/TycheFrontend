@@ -36,9 +36,20 @@ struct MedianResult {
     std::span<float> lower, upper;
 };
 
+static float compute_quartile(std::span<float> sorted_data, float quartile) {
+    quartile              = std::clamp(quartile, 0.0f, 1.0f);
+    auto   n              = sorted_data.size();
+    auto   floating_index = (n - 1) * quartile;
+    size_t lower          = std::floor(floating_index);
+    size_t upper          = std::ceil(floating_index);
+    auto   delta          = floating_index - lower;
+    auto   lower_val      = sorted_data[lower];
+    auto   upper_val      = sorted_data[upper];
+
+    return (1.0 - delta) * lower_val + delta * upper_val;
+}
+
 static MedianResult compute_median(std::span<float> sorted_data) {
-    qDebug() << Q_FUNC_INFO
-             << QVector<float>(sorted_data.begin(), sorted_data.end());
     if (sorted_data.size() < 2) return {};
 
     bool is_odd = sorted_data.size() % 2 != 0;
@@ -99,25 +110,19 @@ TEST_CASE("median") {
 }
 
 BoxplotResult compute_boxplot(std::span<float> sorted_data) {
-    qDebug() << Q_FUNC_INFO
-             << QVector<float>(sorted_data.begin(), sorted_data.end());
 
     if (sorted_data.empty()) return {};
 
     std::sort(sorted_data.begin(), sorted_data.end());
 
-    auto Q2 = compute_median(sorted_data);
-    qDebug() << "Q2" << Q2.median;
+    auto Q1 = compute_quartile(sorted_data, 0.25f);
+    auto Q2 = compute_quartile(sorted_data, 0.5f);
+    auto Q3 = compute_quartile(sorted_data, 0.75f);
 
-    auto Q1 = compute_median(Q2.lower);
-    qDebug() << "Q1" << Q1.median;
-    auto Q3 = compute_median(Q2.upper);
-    qDebug() << "Q3" << Q3.median;
+    auto IOR = Q3 - Q1;
 
-    auto IOR = Q3.median - Q1.median;
-
-    auto lower_lim = Q1.median - 1.5 * IOR;
-    auto upper_lim = Q3.median + 1.5 * IOR;
+    auto lower_lim = Q1 - 1.5 * IOR;
+    auto upper_lim = Q3 + 1.5 * IOR;
 
     // find lowest value that is not lower than the limit
 
@@ -144,8 +149,8 @@ BoxplotResult compute_boxplot(std::span<float> sorted_data) {
 
 
     return {
-        .structure = QVector<float>() << lowest_valid << Q1.median << Q2.median
-                                      << Q3.median << highest_valid,
+        .structure = QVector<float>()
+                     << lowest_valid << Q1 << Q2 << Q3 << highest_valid,
         .outliers = outliers,
     };
 }
@@ -161,7 +166,7 @@ TEST_CASE("box_plot") {
         auto res1 = compute_boxplot(test_a);
 
         REQUIRE(res1.structure.value(0) == doctest::Approx(3.4));
-        REQUIRE(res1.structure.value(1) == doctest::Approx(3.46));
+        REQUIRE(res1.structure.value(1) == doctest::Approx(3.48));
         REQUIRE(res1.structure.value(2) == doctest::Approx(3.51));
         REQUIRE(res1.structure.value(3) == doctest::Approx(3.54));
         REQUIRE(res1.structure.value(4) == doctest::Approx(3.56));
@@ -175,9 +180,9 @@ TEST_CASE("box_plot") {
         auto res1 = compute_boxplot(test_a);
 
         REQUIRE(res1.structure.value(0) == doctest::Approx(58));
-        REQUIRE(res1.structure.value(1) == doctest::Approx(67.5));
+        REQUIRE(res1.structure.value(1) == doctest::Approx(68.5));
         REQUIRE(res1.structure.value(2) == doctest::Approx(76));
-        REQUIRE(res1.structure.value(3) == doctest::Approx(85.25));
+        REQUIRE(res1.structure.value(3) == doctest::Approx(81.75));
         REQUIRE(res1.structure.value(4) == doctest::Approx(91));
 
         REQUIRE(res1.outliers.isEmpty());
@@ -192,7 +197,7 @@ TEST_CASE("box_plot") {
         REQUIRE(res1.structure.value(0) == doctest::Approx(100));
         REQUIRE(res1.structure.value(1) == doctest::Approx(110));
         REQUIRE(res1.structure.value(2) == doctest::Approx(125));
-        REQUIRE(res1.structure.value(3) == doctest::Approx(147.5));
+        REQUIRE(res1.structure.value(3) == doctest::Approx(142.5));
         REQUIRE(res1.structure.value(4) == doctest::Approx(170));
 
         REQUIRE(res1.outliers == QVector<float> { 220 });
