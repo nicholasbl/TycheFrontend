@@ -7,10 +7,13 @@ SOURCES += \
         main.cpp \
         metricmodel.cpp \
         simresultmodel.cpp \
+        stat_math.cpp \
         structmodel.cpp
 
 RESOURCES += \
     res.qrc
+
+QMAKE_CXXFLAGS_RELEASE += DOCTEST_CONFIG_DISABLE
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -32,4 +35,5 @@ HEADERS += \
     categorymodel.h \
     metricmodel.h \
     simresultmodel.h \
+    stat_math.h \
     structmodel.h
