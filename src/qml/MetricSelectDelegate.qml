@@ -8,6 +8,7 @@ TransparentRectangle {
     property string metric_name : "Debug Name"
     property string metric_description : "A debug description"
     property string metric_image
+    property bool metric_selected
 
     background_opacity: 0
 
@@ -59,6 +60,11 @@ TransparentRectangle {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.bottom: parent.bottom
+        checked: metric_selected
+
+        onClicked: {
+            metric_selected = checked
+        }
     }
     states: [
         State {

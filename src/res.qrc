@@ -33,5 +33,12 @@
         <file>fonts/Roboto-Bold.ttf</file>
         <file>fonts/Roboto-BoldItalic.ttf</file>
         <file>fonts/Roboto-Italic.ttf</file>
+        <file>qml/Global/Constants.qml</file>
+        <file>qml/Global/qmldir</file>
+        <file>qml/ViolinChart.qml</file>
+        <file>qml/ExploreColumnHeader.qml</file>
+        <file>qml/SelectableRectangle.qml</file>
+        <file>qml/ExploreRowHeader.qml</file>
+        <file>qml/TransparentPane.qml</file>
     </qresource>
 </RCC>

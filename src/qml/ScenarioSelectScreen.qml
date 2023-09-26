@@ -3,7 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 2.15
 
 FlowScreen {
-    id: item1
+    id: root
     header_text: "Select a design scenario to explore"
     show_footer_back: false
 
@@ -14,19 +14,20 @@ FlowScreen {
         cellWidth: 450
         cellHeight: 150
 
-        model: DebugScenarioModel {}
+        model: scenario_model
 
         delegate: ScenarioDelegate {
-            width: 450
-            height: 150
+            width: 445
+            height: 145
 
             name: model.name
-            image_source: image
+            image_source: model.image
             description_text: model.description
 
             onSelected: {
                 console.log("Selected scenario", index)
                 GridView.view.currentIndex = index
+                scenario_model.current_scenario = index
             }
 
             state: GridView.view.currentIndex === index ? "selected" : ""
@@ -45,7 +46,16 @@ FlowScreen {
                 anchors.bottom: parent.bottom
                 anchors.margins: 10
                 highlighted: true
+                onClicked:  {
+                    root.proceed_to_next()
+                }
             }
+        }
+
+        Component.onCompleted: {
+            scenario_model.current_scenario_changed.connect(function (){
+                main_grid.currentIndex = scenario_model.current_scenario
+            })
         }
     }
 

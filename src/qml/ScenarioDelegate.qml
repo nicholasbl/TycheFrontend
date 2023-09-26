@@ -5,7 +5,7 @@ import QtQuick.Controls.Material
 
 import "./utility.js" as Util
 
-UIRect {
+TransparentPane {
     id: root
 
     property alias name: label.text
@@ -14,9 +14,9 @@ UIRect {
 
     signal selected
 
-    shadow_opacity: (click_area.containsMouse) ? .75 : .5
+    Material.elevation: (click_area.containsMouse) ? 5 : 2
 
-    Behavior on shadow_opacity {
+    Behavior on Material.elevation {
         NumberAnimation {
             duration: 250
         }

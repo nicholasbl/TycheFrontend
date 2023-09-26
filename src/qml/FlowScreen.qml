@@ -9,6 +9,10 @@ Item {
     property bool show_footer_back: true
     property bool show_footer_continue: true
 
+    property var before_page_forward: function() {
+        console.log("Default page advance")
+    }
+
     default property alias children: content_item.data
     property alias custom_bar: custom_buttons.data
 
@@ -87,7 +91,7 @@ Item {
                 text: "Continue"
                 highlighted: true
                 flat: true
-                onClicked: swipeView.currentIndex += 1
+                onClicked: proceed_to_next()
                 Layout.rightMargin: 5
                 Layout.leftMargin: 5
             }
@@ -101,6 +105,11 @@ Item {
         anchors.right: parent.right
         anchors.top: header.bottom
         anchors.bottom: footer.top
+    }
+
+    function proceed_to_next() {
+        root.before_page_forward()
+        swipeView.currentIndex += 1
     }
 }
 

@@ -4,7 +4,9 @@
 
 #include <QDebug>
 
-double compute_std_deviation(std::span<float> data) {
+#include <random>
+
+double compute_std_deviation(QVector<float> data) {
     double sum = 0.0;
     for (auto d : data) {
         sum += d;
@@ -24,7 +26,7 @@ double compute_std_deviation(std::span<float> data) {
 }
 
 TEST_CASE("standard_deviation") {
-    std::vector<float> data = { 2, 4, 4, 4, 5, 5, 7, 9 };
+    QVector<float> data = { 2, 4, 4, 4, 5, 5, 7, 9 };
 
     auto res = compute_std_deviation(data);
 
@@ -109,7 +111,7 @@ TEST_CASE("median") {
     REQUIRE(to_vector(r3.upper) == r3u);
 }
 
-BoxplotResult compute_boxplot(std::span<float> sorted_data) {
+BoxplotResult compute_boxplot(QVector<float> sorted_data) {
 
     if (sorted_data.empty()) return {};
 
@@ -222,7 +224,7 @@ compute_kde(std::span<float> sorted_data, float x, float bandwidth) {
     return sum / (sorted_data.size() * bandwidth);
 }
 
-ViolinResult compute_violin(std::span<float> data) {
+ViolinResult compute_violin(QVector<float> data) {
     std::sort(data.begin(), data.end());
     // auto compute bandwidth
 
@@ -326,4 +328,22 @@ TEST_CASE("violin") {
     for (size_t i = 0; i < truth.size(); i++) {
         REQUIRE_EQ(res1.y.value(i), doctest::Approx(truth.at(i)));
     }
+}
+
+// =============================================================================
+
+std::random_device rd {};
+std::mt19937       gen { rd() };
+
+QVector<float> generate_random_testing_data() {
+    auto zone         = std::uniform_real_distribution<float>(1.0, 10.0);
+    auto distribution = std::normal_distribution(zone(gen), zone(gen));
+
+    QVector<float> ret;
+    ret.resize(100);
+
+    for (auto& v : ret) {
+        v = distribution(gen);
+    }
+    return ret;
 }

@@ -7,10 +7,15 @@ FlowScreen {
 
     header_text: "Select metrics for this scenario"
 
+    before_page_forward: function() {
+        category_model.finalize_choices()
+        metric_model.finalize_choices()
+    }
+
     RowLayout {
         anchors.fill: parent
 
-        UIRect {
+        TransparentPane {
             Layout.margins: 10
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -46,18 +51,23 @@ FlowScreen {
                         metric_name: model.name
                         metric_description: model.description
                         metric_image: model.image
+
+                        metric_selected: model.selected
+
+                        onMetric_selectedChanged: {
+                            model.selected = metric_selected
+                        }
                     }
 
-                    model: DebugMetricModel {}
+                    model: metric_model
                 }
             }
         }
 
-        UIRect {
+        TransparentPane {
             Layout.margins: 10
             Layout.fillWidth: true
             Layout.fillHeight: true
-            //background_opacity: .3
 
             ColumnLayout {
                 anchors.fill: parent
@@ -89,9 +99,15 @@ FlowScreen {
                         metric_name: model.name
                         metric_description: model.description
                         metric_image: model.image
+
+                        metric_selected: model.selected
+
+                        onMetric_selectedChanged: {
+                            model.selected = metric_selected
+                        }
                     }
 
-                    model: DebugMetricModel {}
+                    model: category_model
                 }
             }
         }

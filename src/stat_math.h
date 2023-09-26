@@ -26,8 +26,10 @@ struct ViolinResult {
     QVector<float> x, y;
 };
 
-double compute_std_deviation(std::span<float> data);
+double compute_std_deviation(QVector<float> data);
 
-BoxplotResult compute_boxplot(std::span<float> data);
+BoxplotResult compute_boxplot(QVector<float> data);
 
-ViolinResult compute_violin(std::span<float> data);
+ViolinResult compute_violin(QVector<float> data);
+
+QVector<float> generate_random_testing_data();

@@ -55,7 +55,6 @@ void tuple_get(Tuple&& t, int index, Function&& f) {
     _get_by_idx<Tuple, S - 1, Function>::check(t, index, std::move(f));
 }
 
-
 ///
 /// \brief Get the fields of a record
 ///
@@ -272,10 +271,20 @@ public:
         m_records[i] = r;
 
         auto left  = index(i, 0);
-        auto right = index(i, m_header.size());
+        auto right = index(i, columnCount() - 1);
 
         emit dataChanged(left, right);
         return true;
+    }
+
+    template <class Function>
+    void update_at(int i, Function&& f) {
+        auto* ptr = get_at(i);
+        if (ptr) {
+            Record r = *ptr;
+            f(r);
+            set_at(i, r);
+        }
     }
 
     auto const& vector() const { return m_records; }

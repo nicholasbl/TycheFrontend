@@ -28,7 +28,7 @@ Item {
     property real line_heights: height / 2
 
     property color line_color: "white"
-    property color bar_color: "green"
+    property color fill_color: "green"
 
     Rectangle {
         id: center_line
@@ -41,7 +41,7 @@ Item {
 
     Rectangle {
         id: left_bar
-        width: 2
+        width: 1
         height: root.line_heights
         color: line_color
         anchors.verticalCenter: parent.verticalCenter
@@ -49,15 +49,22 @@ Item {
         x: root.width * computed_ratios[0]
 
         Label {
-            text: data_array[0]
+            text: data_array[0].toFixed(2)
             anchors.bottom: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
+            opacity: root_mouse.containsMouse
+
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 100
+                }
+            }
         }
     }
 
     Rectangle {
         id: right_bar
-        width: 2
+        width: 1
         height: root.line_heights
         color: line_color
         anchors.verticalCenter: parent.verticalCenter
@@ -65,9 +72,16 @@ Item {
         x: root.width * computed_ratios[4]
 
         Label {
-            text: data_array[4]
+            text: data_array[4].toFixed(2)
             anchors.bottom: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
+            opacity: root_mouse.containsMouse
+
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 100
+                }
+            }
         }
     }
 
@@ -75,31 +89,45 @@ Item {
         id: mid_bar
         width: (computed_ratios[3] - computed_ratios[1]) * root.width
         height: root.line_heights
-        color: bar_color
+        color: fill_color
         x: root.width * computed_ratios[1]
         anchors.verticalCenter: parent.verticalCenter
         border.color: line_color
-        border.width: 2
+        border.width: 1
         radius: 5
 
         Label {
-            text: data_array[1]
+            text: data_array[1].toFixed(2)
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -implicitHeight
+            anchors.verticalCenterOffset: implicitHeight
             anchors.right: parent.left
+            opacity: root_mouse.containsMouse
+
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 100
+                }
+            }
         }
 
         Label {
-            text: data_array[3]
+            text: data_array[3].toFixed(2)
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -implicitHeight
+            anchors.verticalCenterOffset: implicitHeight
             anchors.left: parent.right
+            opacity: root_mouse.containsMouse
+
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 100
+                }
+            }
         }
     }
 
     Rectangle {
         id: mid_line
-        width: 2
+        width: 1
         height: root.line_heights
         color: line_color
         anchors.verticalCenter: parent.verticalCenter
@@ -107,9 +135,22 @@ Item {
         x: root.width * computed_ratios[2]
 
         Label {
-            text: data_array[2]
+            text: data_array[2].toFixed(2)
             anchors.bottom: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
+            opacity: root_mouse.containsMouse
+
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 100
+                }
+            }
         }
+    }
+
+    MouseArea {
+        id: root_mouse
+        anchors.fill: parent
+        hoverEnabled: true
     }
 }

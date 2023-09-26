@@ -1,14 +1,11 @@
-// Copyright (C) 2021 The Qt Company Ltd.
-// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only
-
 import QtQuick 6.5
 import QtQuick.Layouts
 import QtQuick.Controls 6.5
 import QtQuick.Controls.Material
 
 ApplicationWindow {
-    width: 1240
-    height: 1080
+    width: 960
+    height: 540
 
     visible: true
     title: "Tyche Frontend"

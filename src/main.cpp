@@ -4,8 +4,31 @@
 #include <QQmlContext>
 #include <QSurfaceFormat>
 
+#include "categorymodel.h"
+#include "metricmodel.h"
+#include "scenariomodel.h"
+#include "simresultmodel.h"
+
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest.h"
+
+void on_scenario_changed(ScenarioModel& scenario_model,
+                         MetricModel&   metric_model,
+                         CategoryModel& category_model) {
+    qDebug() << Q_FUNC_INFO;
+    auto current_index = scenario_model.current_scenario();
+
+    auto* ptr = scenario_model.get_at(current_index);
+
+    if (!ptr) return;
+
+    qDebug() << Q_FUNC_INFO << "Metric model size:" << metric_model.rowCount();
+    qDebug() << Q_FUNC_INFO
+             << "Category model size:" << category_model.rowCount();
+
+    metric_model.replace(ptr->metrics);
+    category_model.replace(ptr->categories);
+}
 
 int main(int argc, char* argv[]) {
     doctest::Context context;
@@ -41,26 +64,45 @@ int main(int argc, char* argv[]) {
     }
 
     //    PortfolioModel model;
-    //    ScenarioModel  scenario_model;
+    ScenarioModel scenario_model;
+    MetricModel   metric_model;
+    CategoryModel category_model;
 
-    //    QObject::connect(&NetworkObject::global(),
-    //                     &NetworkObject::new_scenario_list,
-    //                     &scenario_model,
-    //                     &ScenarioModel::recv_new_scenario_list);
+    SelectedMetricModel   selected_metric_model(&metric_model);
+    SelectedCategoryModel selected_category_model(&category_model);
 
-    //    QObject::connect(
-    //        &scenario_model, &ScenarioModel::use, &model,
-    //        &PortfolioModel::use);
+    SimResultSumModel sim_result_sum;
 
-    //    NetworkObject::global().ask_scenario_list();
+    SimResultModel sim_result_model(
+        &selected_metric_model, &selected_category_model, &sim_result_sum);
+
+    QObject::connect(&scenario_model,
+                     &ScenarioModel::current_scenario_changed,
+                     &scenario_model,
+                     [&]() {
+                         on_scenario_changed(
+                             scenario_model, metric_model, category_model);
+                     });
+
+    scenario_model.add_placeholder();
 
     QQmlApplicationEngine engine;
 
-    //    engine.rootContext()->setContextProperty("portfolio_model", &model);
-    //    engine.rootContext()->setContextProperty("scenario_model",
-    //    &scenario_model);
+    // This is technically a slower way than using plugins, however, the plugin
+    // stuff has always been...odd.
+    auto register_as = [&](auto* t, QString name) {
+        engine.rootContext()->setContextProperty(name, t);
+    };
 
-    const QUrl url(u"qrc:/qml/main.qml"_qs);
+    register_as(&scenario_model, "scenario_model");
+    register_as(&metric_model, "metric_model");
+    register_as(&category_model, "category_model");
+    register_as(&selected_metric_model, "selected_metric_model");
+    register_as(&selected_category_model, "selected_category_model");
+    register_as(&sim_result_model, "sim_result_model");
+    register_as(&sim_result_sum, "sim_result_sum_model");
+
+    QUrl const url(u"qrc:/qml/main.qml"_qs);
 
     QObject::connect(
         &engine,
