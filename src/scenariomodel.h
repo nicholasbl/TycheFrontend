@@ -2,6 +2,7 @@
 
 #include "categorymodel.h"
 #include "metricmodel.h"
+#include "networkcontroller.h"
 #include "structmodel.h"
 
 struct MetricRecord;
@@ -20,6 +21,19 @@ struct ScenarioRecord {
               MetaMember(&ScenarioRecord::uuid, "uuid"),
               MetaMember(&ScenarioRecord::description, "description"),
               MetaMember(&ScenarioRecord::image, "image"));
+
+
+    ScenarioRecord() = default;
+
+    template <class Archive>
+    void archive(Archive& a) {
+        a("name", name);
+        a("id", uuid);
+        a("description", description);
+        a("image", image);
+        a("metric_defs", metrics);
+        a("category_defs", categories);
+    }
 };
 
 class ScenarioModel : public StructTableModel<ScenarioRecord> {
@@ -33,10 +47,15 @@ class ScenarioModel : public StructTableModel<ScenarioRecord> {
 public:
     explicit ScenarioModel(QObject* parent = nullptr);
 
-    void add_placeholder();
-
     int  current_scenario() const;
     void set_current_scenario(int index);
+
+
+public slots:
+    void refresh_scenario_list();
+
+    void new_scenario_list(MethodResult);
+
 signals:
     void current_scenario_changed();
 };

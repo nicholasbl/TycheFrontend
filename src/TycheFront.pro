@@ -6,6 +6,7 @@ SOURCES += \
         categorymodel.cpp \
         main.cpp \
         metricmodel.cpp \
+        networkcontroller.cpp \
         scenariomodel.cpp \
         simresultmodel.cpp \
         stat_math.cpp \
@@ -39,6 +40,7 @@ DISTFILES += \
 HEADERS += \
     categorymodel.h \
     metricmodel.h \
+    networkcontroller.h \
     scenariomodel.h \
     simresultmodel.h \
     stat_math.h \

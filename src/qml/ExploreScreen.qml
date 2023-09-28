@@ -18,6 +18,8 @@ FlowScreen {
         Layout.fillHeight: true
     }
 
+    property bool in_edit_mode: false
+
 
     RowLayout {
         id: root_view
@@ -84,6 +86,8 @@ FlowScreen {
                         delegate : ExploreRowHeader {
                             height: grid_view.row_height
                             width: grid_view.column_width
+
+                           in_edit_mode: root.in_edit_mode
                         }
                     }
                 }
@@ -97,44 +101,58 @@ FlowScreen {
                 id: sum_footer
                 Layout.fillWidth: true
                 Layout.preferredHeight: grid_view.row_height
+                background_opacity: .75
 
-                Row {
+                RowLayout {
                     anchors.fill: parent
+                    spacing: 0
                     Item {
                         id: sum_spacer
-                        width: grid_view.column_width
-                        height: grid_view.row_height
+                        Layout.minimumWidth: grid_view.column_width
+                        Layout.maximumWidth: grid_view.column_width
+                        Layout.fillHeight: true
                         ColumnLayout {
                             anchors.fill: parent
-                            anchors.margins: 3
+                            anchors.margins: 5
                             Label {
                                 text: "Total Portfolio"
                             }
 
                             Label {
-                                font.pointSize: 20
+                                font.pointSize: 18
                                 text: Util.format_money(sim_result_model.total_value)
                                 Layout.alignment: Qt.AlignRight
                             }
                         }
                     }
 
-                    Rectangle {
-                        width: 1
-                        height: sum_footer.height
-                        color: Material.dividerColor
-                    }
+                    Row {
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
 
-                    Repeater {
-                        model: sim_result_sum_model
-                        delegate: CellDelegate {
-                            height: grid_view.row_height
-                            width: grid_view.column_width
-                            view_index: view_selection.currentIndex
-                            fill_color: Util.color_with_alpha(Material.color(Constants.all_colors[index]), .60)
-                            border.width: 0
+                        Repeater {
+                            anchors.fill: parent
+                            model: sim_result_sum_model
+                            delegate: CellDelegate {
+
+                                height: grid_view.row_height
+                                width: grid_view.column_width - 1
+                                view_index: view_selection.currentIndex
+                                fill_color: Util.color_with_alpha(Material.color(Constants.all_colors[index]), .60)
+                                border.width: 0
+
+                                Rectangle {
+                                    width: 1
+                                    height: parent.height
+                                    anchors.left: parent.left
+                                    color: Material.dividerColor
+                                }
+
+                            }
                         }
                     }
+
+
                 }
 
 
@@ -142,30 +160,50 @@ FlowScreen {
 
         }
 
-        Pane {
+        TransparentPane {
             id: side_bar
             Layout.fillHeight: true
             Layout.preferredWidth: 180
+            Layout.margins: 10
 
-            Material.roundedScale: Material.MediumScale
-            Material.elevation: 5
-
-            Component.onCompleted: {
-                background.opacity = .5
-            }
+            background_opacity: .75
 
             ColumnLayout {
                 anchors.fill: parent
-                RoundButton {
-                    checkable: true
-                    flat: true
-                    text: "\uf044"
-                    font: loader.font
+                StackLayout {
+                    id: edit_stack
 
-                    onClicked: {
-                        checked =! checked
+                    Layout.fillWidth: true
+
+                    RoundButton {
+                        flat: true
+                        text: "\uf044"
+                        font: loader.font
+
+                        onClicked: {
+                            edit_stack.currentIndex = 1
+                            root.in_edit_mode = true
+                        }
                     }
+
+                    Item {
+                        ColumnLayout {
+                            anchors.fill: parent
+                            Label {
+                                Layout.fillWidth: true
+                                text: "Edit investments in technologies, then tap simulate to see the result of these new alloctions"
+                                wrapMode: Label.WrapAtWordBoundaryOrAnywhere
+                            }
+                            Button {
+                                text: "Simulate"
+                                onClicked: sim_result_model.ask_run_scenario()
+                            }
+                        }
+                    }
+
                 }
+
+
 
                 ComboBox {
                     id: view_selection

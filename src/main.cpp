@@ -6,15 +6,17 @@
 
 #include "categorymodel.h"
 #include "metricmodel.h"
+#include "networkcontroller.h"
 #include "scenariomodel.h"
 #include "simresultmodel.h"
 
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest.h"
 
-void on_scenario_changed(ScenarioModel& scenario_model,
-                         MetricModel&   metric_model,
-                         CategoryModel& category_model) {
+void on_scenario_changed(ScenarioModel&  scenario_model,
+                         MetricModel&    metric_model,
+                         CategoryModel&  category_model,
+                         SimResultModel& sim_result_model) {
     qDebug() << Q_FUNC_INFO;
     auto current_index = scenario_model.current_scenario();
 
@@ -28,9 +30,11 @@ void on_scenario_changed(ScenarioModel& scenario_model,
 
     metric_model.replace(ptr->metrics);
     category_model.replace(ptr->categories);
+    sim_result_model.set_current_scenario(*ptr);
 }
 
 int main(int argc, char* argv[]) {
+    qDebug() << "Startup";
     doctest::Context context;
 
     context.applyCommandLine(argc, argv);
@@ -40,6 +44,8 @@ int main(int argc, char* argv[]) {
     if (context.shouldExit()) { return test_res; }
 
     QApplication app(argc, argv);
+
+    JSONRpcMethod::set_default_host("http://localhost:8080");
 
     QSurfaceFormat format;
     format.setSamples(4);
@@ -63,6 +69,8 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    qDebug() << "Fonts installed";
+
     //    PortfolioModel model;
     ScenarioModel scenario_model;
     MetricModel   metric_model;
@@ -76,15 +84,22 @@ int main(int argc, char* argv[]) {
     SimResultModel sim_result_model(
         &selected_metric_model, &selected_category_model, &sim_result_sum);
 
+    qDebug() << "Models constructed";
+
     QObject::connect(&scenario_model,
                      &ScenarioModel::current_scenario_changed,
                      &scenario_model,
                      [&]() {
-                         on_scenario_changed(
-                             scenario_model, metric_model, category_model);
+                         qDebug() << "Scenario changed...";
+                         on_scenario_changed(scenario_model,
+                                             metric_model,
+                                             category_model,
+                                             sim_result_model);
                      });
 
-    scenario_model.add_placeholder();
+    scenario_model.refresh_scenario_list();
+
+    qDebug() << "Model setup complete";
 
     QQmlApplicationEngine engine;
 
@@ -102,6 +117,8 @@ int main(int argc, char* argv[]) {
     register_as(&sim_result_model, "sim_result_model");
     register_as(&sim_result_sum, "sim_result_sum_model");
 
+    qDebug() << "Models installed";
+
     QUrl const url(u"qrc:/qml/main.qml"_qs);
 
     QObject::connect(
@@ -113,6 +130,8 @@ int main(int argc, char* argv[]) {
         },
         Qt::QueuedConnection);
     engine.load(url);
+
+    qDebug() << "QML ready";
 
     return app.exec();
 }

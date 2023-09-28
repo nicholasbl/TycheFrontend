@@ -1,8 +1,9 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 2.15
+import QtQuick.Controls.Material.impl
 
-Item {
+Page {
     id: root
 
     property string header_text: "Header Text"
@@ -13,7 +14,6 @@ Item {
         console.log("Default page advance")
     }
 
-    default property alias children: content_item.data
     property alias custom_bar: custom_buttons.data
 
     property var extra: Item {
@@ -21,14 +21,11 @@ Item {
         Layout.fillHeight: true
     }
 
-    TransparentRectangle {
-        id: header
-        height: Math.max(header_inset.implicitHeight, 48)
+    header: TransparentRectangle {
+        id: header_bar
+        implicitHeight: 48
         radius: 0
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
-
+        Material.elevation: 0
         RowLayout {
             id: header_inset
             anchors.fill: parent
@@ -50,17 +47,20 @@ Item {
             }
 
         }
+
+        layer.enabled: header_bar.Material.elevation > 0
+        layer.effect: ElevationEffect {
+            elevation: header_bar.Material.elevation
+            fullWidth: true
+        }
     }
 
-    TransparentRectangle {
-        id: footer
-        radius: 0
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.leftMargin: 0
+    background: Item {}
 
-        height: back_button.implicitHeight
+    footer: TransparentRectangle {
+        id: footer
+        implicitHeight: 48
+        radius: 0
 
         RowLayout {
             anchors.fill: parent
@@ -99,13 +99,13 @@ Item {
 
     }
 
-    Item {
-        id: content_item
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: header.bottom
-        anchors.bottom: footer.top
-    }
+//    Item {
+//        id: content_item
+////        anchors.left: parent.left
+////        anchors.right: parent.right
+////        anchors.top: header.bottom
+////        anchors.bottom: footer.top
+//    }
 
     function proceed_to_next() {
         root.before_page_forward()

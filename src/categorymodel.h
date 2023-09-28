@@ -21,7 +21,14 @@ struct CategoryRecord {
               MetaMember(&CategoryRecord::max_investment, "max_investment"),
               MetaMember(&CategoryRecord::selected, "selected", true));
 
-    QJsonObject to_request_object() const;
+    template <class Archive>
+    void archive(Archive& a) {
+        a("name", name);
+        a("description", description);
+        a("image", image);
+        a("starting_investment", investment);
+        a("max_investment", max_investment);
+    }
 };
 
 // =============================================================================
@@ -48,4 +55,6 @@ public:
                           QModelIndex const& source_parent) const override;
 
     CategoryRecord const* get_at(int) const;
+
+    CategoryModel* host() const { return m_host; }
 };

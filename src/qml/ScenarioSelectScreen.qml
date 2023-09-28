@@ -57,6 +57,11 @@ FlowScreen {
                 main_grid.currentIndex = scenario_model.current_scenario
             })
         }
+
+        BusyIndicator {
+            anchors.centerIn: parent
+            running: main_grid.count === 0
+        }
     }
 
 }

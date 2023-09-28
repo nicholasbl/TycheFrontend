@@ -40,5 +40,6 @@
         <file>qml/SelectableRectangle.qml</file>
         <file>qml/ExploreRowHeader.qml</file>
         <file>qml/TransparentPane.qml</file>
+        <file>qml/FadingStack.qml</file>
     </qresource>
 </RCC>

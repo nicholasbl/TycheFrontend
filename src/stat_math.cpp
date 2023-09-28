@@ -335,9 +335,8 @@ TEST_CASE("violin") {
 std::random_device rd {};
 std::mt19937       gen { rd() };
 
-QVector<float> generate_random_testing_data() {
-    auto zone         = std::uniform_real_distribution<float>(1.0, 10.0);
-    auto distribution = std::normal_distribution(zone(gen), zone(gen));
+QVector<float> generate_random_testing_data(float center, float spread) {
+    auto distribution = std::normal_distribution(center, spread);
 
     QVector<float> ret;
     ret.resize(100);

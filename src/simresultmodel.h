@@ -1,5 +1,6 @@
 #pragma once
 
+#include "scenariomodel.h"
 #include "structmodel.h"
 
 #include <QAbstractTableModel>
@@ -9,11 +10,13 @@ class SelectedCategoryModel;
 class SelectedMetricModel;
 class SimResultSumModel;
 
+struct AskRunResult;
+
 struct Cell {
     QVector<float> raw_data;
     QVector<float> violin_x_data;
     QVector<float> violin_y_data;
-    QVector<float> box_structure;
+    QVector<float> box_structure = { 0, 1, 2, 3, 4 };
     QVector<float> box_outliers;
 
     Cell() = default;
@@ -35,6 +38,8 @@ class SimResultModel : public QAbstractTableModel {
     QPointer<SelectedCategoryModel> m_categories;
     QPointer<SimResultSumModel>     m_sim_sum_model;
 
+    ScenarioRecord m_current_scenario;
+
     QVector<Cell> m_cells;
 
     QVector<float> m_all_cell_stats;
@@ -55,6 +60,8 @@ class SimResultModel : public QAbstractTableModel {
 private:
     Cell cell_at(int metric, int category) const;
     int  index_at(int metric, int category) const;
+
+    void replace_cells(QVector<Cell> new_cells);
 
 public:
     enum PortfolioRoles {
@@ -87,12 +94,19 @@ public:
     qint64 total_value() const;
     void   set_total_value(qint64 newTotal_value);
 
+    void set_current_scenario(ScenarioRecord);
+
+    void load_data_from(AskRunResult const&);
+
+    void clear();
+
 private slots:
     void source_models_changed();
     void recompute_cell_stats();
     void recompute_total_value();
 
 public slots:
+    void ask_run_scenario();
 
 signals:
     void all_cell_stats_changed();

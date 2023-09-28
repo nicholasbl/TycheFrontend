@@ -32,4 +32,5 @@ BoxplotResult compute_boxplot(QVector<float> data);
 
 ViolinResult compute_violin(QVector<float> data);
 
-QVector<float> generate_random_testing_data();
+QVector<float> generate_random_testing_data(float center = 1.0,
+                                            float spread = 10.);

@@ -27,7 +27,15 @@ struct MetricRecord {
               MetaMember(&MetricRecord::optim_value, "optim_value", true),
               MetaMember(&MetricRecord::bound_type, "bound_type", true));
 
-    QJsonObject to_request_object() const;
+    template <class Archive>
+    void archive(Archive& a) {
+        a("name", name);
+        a("description", description);
+        a("image", image);
+        a("starting_opt", optim_value);
+        a("opt_slider_min", optim_min);
+        a("opt_slider_max", optim_max);
+    }
 };
 
 // =============================================================================
@@ -52,4 +60,6 @@ public:
 
     bool filterAcceptsRow(int                source_row,
                           QModelIndex const& source_parent) const override;
+
+    MetricModel* host() const { return m_host; }
 };

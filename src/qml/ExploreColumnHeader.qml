@@ -20,14 +20,14 @@ Item {
 
         RoundedImage {
             anchors.fill: parent
-            anchors.margins: 5
+            anchors.margins: 2
             asynchronous: true
             source: image
             autoTransform: true
             fillMode: Image.PreserveAspectCrop
             radius: 10
 
-            opacity: .25
+            opacity: .1
 
             BusyIndicator {
                 anchors.fill: parent

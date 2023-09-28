@@ -17,15 +17,19 @@ Item {
 
     // computed below
 
-    property var computed_ratios:  {
+    property var computed_x:  {
+        if (!data_array || data_array.length < 5) {
+            return [0,1,1,1,2]
+        }
+
         var ret = []
         for (let i of data_array) {
-            ret.push(lerp(i, data_global_min, data_global_max, 0.0, 1.0))
+            ret.push(lerp(i, data_global_min, data_global_max, 0.0, width))
         }
         return ret
     }
 
-    property real line_heights: height / 2
+    property real line_heights: height * .9
 
     property color line_color: "white"
     property color fill_color: "green"
@@ -35,8 +39,8 @@ Item {
         height: 4
         color: line_color
         anchors.verticalCenter: parent.verticalCenter
-        width: (computed_ratios[4] - computed_ratios[0]) * parent.width
-        x: root.width * computed_ratios[0]
+        width: (computed_x[4] - computed_x[0])
+        x: computed_x[0]
     }
 
     Rectangle {
@@ -46,7 +50,7 @@ Item {
         color: line_color
         anchors.verticalCenter: parent.verticalCenter
 
-        x: root.width * computed_ratios[0]
+        x: computed_x[0]
 
         Label {
             text: data_array[0].toFixed(2)
@@ -69,7 +73,7 @@ Item {
         color: line_color
         anchors.verticalCenter: parent.verticalCenter
 
-        x: root.width * computed_ratios[4]
+        x: computed_x[4]
 
         Label {
             text: data_array[4].toFixed(2)
@@ -87,10 +91,10 @@ Item {
 
     Rectangle {
         id: mid_bar
-        width: (computed_ratios[3] - computed_ratios[1]) * root.width
+        width: (computed_x[3] - computed_x[1])
         height: root.line_heights
         color: fill_color
-        x: root.width * computed_ratios[1]
+        x: computed_x[1]
         anchors.verticalCenter: parent.verticalCenter
         border.color: line_color
         border.width: 1
@@ -132,7 +136,7 @@ Item {
         color: line_color
         anchors.verticalCenter: parent.verticalCenter
 
-        x: root.width * computed_ratios[2]
+        x: computed_x[2]
 
         Label {
             text: data_array[2].toFixed(2)

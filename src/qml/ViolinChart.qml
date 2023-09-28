@@ -38,7 +38,7 @@ Item {
             let data_y = line_array[i];
 
             let w = lerp(data_x, data_global_min, data_global_max, 0, width)
-            let h = lerp(data_y, data_min, data_max, height/2, 0)
+            let h = lerp(data_y, 0, data_max, height/2, 0)
             ret.push( [w, h] )
         }
 
