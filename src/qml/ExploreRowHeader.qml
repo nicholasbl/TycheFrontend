@@ -41,40 +41,29 @@ Item {
         anchors.margins: 5
         Label {
             id: column_name
-
             text: name
-
             font.bold: true
-
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
             Layout.fillWidth: true
-
-            horizontalAlignment: Qt.AlignHCenter
-            verticalAlignment: Qt.AlignVCenter
         }
 
-        Label {
+        EditLabel {
             id: current_investment_label
             font.pointSize: 18
             text: Util.format_money(investment)
 
-            Material.foreground: in_edit_mode ? Material.Blue : parent.Material.foreground
+            editable: in_edit_mode
 
-            MouseArea {
-                id: edit_current_investment_area
-                anchors.fill: parent
+            Layout.alignment: Qt.AlignRight
 
-                onClicked: edit_popup.open()
-            }
+            onClicked: edit_popup.open()
         }
     }
 
     Popup {
         id: edit_popup
+        margins: 1
 
         property int last_value: 0
-
-        margins: 1
 
         onOpened: {
             last_value = investment
@@ -120,7 +109,7 @@ Item {
                     font.bold: true
                 }
 
-                Label {
+                EditLabel {
                     font.pointSize: 18
                     text: Util.format_money(investment)
                     Layout.alignment: Qt.AlignRight

@@ -2,8 +2,9 @@
 
 #include "categorymodel.h"
 #include "metricmodel.h"
-#include "networkcontroller.h"
 #include "structmodel.h"
+
+#include <QJsonValue>
 
 struct MetricRecord;
 struct CategoryRecord;
@@ -54,8 +55,10 @@ public:
 public slots:
     void refresh_scenario_list();
 
-    void new_scenario_list(MethodResult);
+    void new_scenario_list(QJsonValue);
 
 signals:
     void current_scenario_changed();
+
+    void scenario_fetch_failure(QString);
 };

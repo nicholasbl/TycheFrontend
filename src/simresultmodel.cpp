@@ -27,6 +27,8 @@ struct AskRunScenario {
     }
 };
 
+// =============================================================================
+
 struct AskReplyCell {
     QVector<float> values;
 
@@ -50,6 +52,33 @@ struct AskRunResult {
         a("category_state", cat_state);
         a("metric_state", met_state);
         a("cells", cells);
+    }
+};
+
+// =============================================================================
+struct AskRunOptimMetric {
+    float   value;
+    QString bound_type;
+
+    template <class Archive>
+    void archive(Archive& a) {
+        a("value", value);
+        a("bound_type", bound_type);
+    }
+};
+
+struct AskRunOptim {
+    QString                    scenario_id;
+    int                        portfolio;
+    QString                    opt_method;
+    QVector<AskRunOptimMetric> metric_states;
+
+    template <class Archive>
+    void archive(Archive& a) {
+        a("scenario_id", scenario_id);
+        a("portfolio", portfolio);
+        a("opt_method", opt_method);
+        a("metric_states", metric_states);
     }
 };
 
@@ -206,6 +235,18 @@ void SimResultModel::source_models_changed() {
     }
 
     replace_cells(new_cells);
+
+    auto& cat_host = *m_categories->host();
+
+    quint64 max = 0;
+
+    for (auto const& v : cat_host) {
+        if (v.selected) max += v.max_investment;
+    }
+
+    qDebug() << Q_FUNC_INFO << max;
+
+    set_max_opt_portfolio_amount(max);
 }
 
 void SimResultModel::recompute_cell_stats() {
@@ -260,6 +301,7 @@ void SimResultModel::set_all_cell_stats(QVector<float> newAll_cell_stats) {
 
 void SimResultModel::set_current_scenario(ScenarioRecord record) {
     m_current_scenario = record;
+    set_current_scenario_name(record.name);
 }
 
 void SimResultModel::load_data_from(AskRunResult const& result) {
@@ -275,6 +317,13 @@ void SimResultModel::load_data_from(AskRunResult const& result) {
 
     auto& main_cat = *m_categories->host();
     auto& main_met = *m_metrics->host();
+
+    // once again assume all is the same
+
+    main_cat.update_all([&](CategoryRecord& r, int i) {
+        r.investment = result.cat_state.value(i);
+    });
+
 
     // TODO: replace with two models; one for data, second for a filtered table.
 
@@ -340,19 +389,48 @@ void SimResultModel::ask_run_scenario() {
         JSONRpcMethod::invoke("run_scenario", QJsonArray() << to_json(state));
 
     connect(method,
-            &JSONRpcMethod::request_completed,
+            &JSONRpcMethod::request_failure,
             this,
-            [this](MethodResult result) {
-                result.visit(
-                    [this](QJsonValue doc) {
-                        AskRunResult new_sim_data;
-                        from_json(doc, new_sim_data);
-                        load_data_from(new_sim_data);
-                    },
-                    [](QString err) {
-                        qCritical() << "Unable to get result:" << err;
-                    });
-            });
+            &SimResultModel::error_from_sim);
+
+    connect(
+        method, &JSONRpcMethod::request_success, this, [this](QJsonValue doc) {
+            AskRunResult new_sim_data;
+            from_json(doc, new_sim_data);
+            load_data_from(new_sim_data);
+        });
+}
+
+void SimResultModel::ask_run_optimize() {
+
+    AskRunOptim state;
+
+    state.scenario_id = m_current_scenario.uuid;
+    state.portfolio   = opt_portfolio_amount();
+    state.opt_method  = "none";
+
+    auto* metric_list = m_metrics->host();
+
+    for (auto const& m : *metric_list) {
+        state.metric_states << AskRunOptimMetric {
+            .value = m.optim_value,
+        };
+    }
+
+    auto* method = JSONRpcMethod::invoke("optimize_scenario",
+                                         QJsonArray() << to_json(state));
+
+    connect(method,
+            &JSONRpcMethod::request_failure,
+            this,
+            &SimResultModel::error_from_sim);
+
+    connect(
+        method, &JSONRpcMethod::request_success, this, [this](QJsonValue doc) {
+            AskRunResult new_sim_data;
+            from_json(doc, new_sim_data);
+            load_data_from(new_sim_data);
+        });
 }
 
 // =============================================================================
@@ -378,4 +456,36 @@ void SimResultModel::set_total_value(qint64 newTotal_value) {
     if (m_total_value == newTotal_value) return;
     m_total_value = newTotal_value;
     emit total_value_changed();
+}
+
+QString SimResultModel::current_scenario_name() const {
+    return m_current_scenario_name;
+}
+
+void SimResultModel::set_current_scenario_name(
+    const QString& newCurrent_scenario_name) {
+    if (m_current_scenario_name == newCurrent_scenario_name) return;
+    m_current_scenario_name = newCurrent_scenario_name;
+    emit current_scenario_name_changed();
+}
+
+qint64 SimResultModel::opt_portfolio_amount() const {
+    return m_opt_portfolio_amount;
+}
+
+void SimResultModel::set_opt_portfolio_amount(qint64 newOpt_portfolio_amount) {
+    if (m_opt_portfolio_amount == newOpt_portfolio_amount) return;
+    m_opt_portfolio_amount = newOpt_portfolio_amount;
+    emit opt_portfolio_amount_changed();
+}
+
+qint64 SimResultModel::max_opt_portfolio_amount() const {
+    return m_max_opt_portfolio_amount;
+}
+
+void SimResultModel::set_max_opt_portfolio_amount(
+    qint64 newMax_opt_portfolio_amount) {
+    if (m_max_opt_portfolio_amount == newMax_opt_portfolio_amount) return;
+    m_max_opt_portfolio_amount = newMax_opt_portfolio_amount;
+    emit opt_max_portfolio_amount_changed();
 }

@@ -41,5 +41,7 @@
         <file>qml/ExploreRowHeader.qml</file>
         <file>qml/TransparentPane.qml</file>
         <file>qml/FadingStack.qml</file>
+        <file>qml/ExploreSideBar.qml</file>
+        <file>qml/EditLabel.qml</file>
     </qresource>
 </RCC>

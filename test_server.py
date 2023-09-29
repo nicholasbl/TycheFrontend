@@ -164,9 +164,38 @@ def run_scenario(scenario_state):
     return ret
 
 
+def optimize_scenario(scenario_opt):
+    time.sleep(1)
+    print("Running optim:", scenario_opt)
+    scenario_state = to_object(scenario_opt)
+    sid = scenario_state.scenario_id
+
+    # generate some fun data
+
+    per_cat_data = []
+
+    for c_i in range(4):
+        per_metric_data = []
+        for m_i in range(4):
+            cell = generate_random_normal(m_i*10, 10, 25)
+            cell = { "x" : cell }
+            per_metric_data.append(cell)
+        per_cat_data.append(per_metric_data)
+
+    ret = to_dict({
+        "scenario_id" : sid,
+        "category_state" : [int(i) for i in np.random.random(4) * 10000],
+        # dont need metric states
+        "cells" : per_cat_data
+    })
+
+    print(ret)
+    return ret
+
 
 server = SimpleJSONRPCServer(('localhost', 8080))
 server.register_function(get_scenarios)
 server.register_function(run_scenario)
+server.register_function(optimize_scenario)
 server.serve_forever()
 

@@ -6,6 +6,8 @@ import "Global"
 import "./utility.js" as Util
 
 Item {
+    property bool enable_editing: false
+
     SelectableRectangle {
         anchors.fill: parent
         anchors.margins: 1
@@ -40,7 +42,7 @@ Item {
             anchors.margins: 3
             spacing: 3
 
-            Label {
+            EditLabel {
                 id: column_name
 
                 text: name
@@ -51,9 +53,40 @@ Item {
 
                 horizontalAlignment: Qt.AlignHCenter
                 verticalAlignment: Qt.AlignVCenter
+
+                editable: enable_editing
+
+                onClicked: edit_opts.open()
             }
         }
 
+        Popup {
+            id: edit_opts
+            margins: 1
 
+            ColumnLayout {
+                RowLayout {
+                    Label {
+                        text: optim_min
+                    }
+
+                    Slider {
+                        value: optim_value
+                        from: optim_min
+                        to: optim_max
+
+                        stepSize: 1
+
+                        onMoved: {
+                            optim_value = value
+                        }
+                    }
+
+                    Label {
+                        text: optim_max
+                    }
+                }
+            }
+        }
     }
 }

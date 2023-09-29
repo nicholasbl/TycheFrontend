@@ -8,33 +8,7 @@
 
 #include <variant>
 
-
-template <class... Ts>
-struct overloaded : Ts... {
-    using Ts::operator()...;
-};
-template <class... Ts>
-overloaded(Ts...) -> overloaded<Ts...>;
-
 class QNetworkAccessManager;
-
-struct MethodResult {
-    std::variant<QJsonValue, QString> storage;
-
-    MethodResult() = default;
-    MethodResult(QJsonValue);
-    MethodResult(QString);
-
-    template <class SuccessF, class FailF>
-    void visit(SuccessF&& sf, FailF&& ff) {
-        std::visit(overloaded { [&](QJsonValue doc) { sf(doc); },
-                                [&](QString err) { ff(err); } },
-                   storage);
-    }
-};
-
-Q_DECLARE_METATYPE(MethodResult);
-
 
 class JSONRpcMethod : public QObject {
     Q_OBJECT
@@ -53,7 +27,8 @@ public:
     static JSONRpcMethod* invoke(QString method_name, QJsonArray params);
 
 signals:
-    void request_completed(MethodResult);
+    void request_success(QJsonValue);
+    void request_failure(QString);
 };
 
 
@@ -80,6 +55,10 @@ inline QJsonValue to_json(QString s) {
 }
 
 inline QJsonValue to_json(int s) {
+    return s;
+}
+
+inline QJsonValue to_json(float s) {
     return s;
 }
 

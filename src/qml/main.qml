@@ -58,7 +58,9 @@ ApplicationWindow {
         Component {
             id: sim_path
             ApplicationFlow {
-
+                StackView.onActivated: {
+                    scenario_model.refresh_scenario_list();
+                }
             }
         }
 

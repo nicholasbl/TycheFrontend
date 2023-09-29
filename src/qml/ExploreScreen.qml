@@ -8,17 +8,12 @@ import "./utility.js" as Util
 FlowScreen {
     id: root
 
-    header_text: "Explore Scenario"
+    header_text: "Explore Scenario: " + sim_result_model.current_scenario_name
 
     show_footer_continue: false
 
-    custom_bar: ToolButton {
-        text: "\uf08e"
-        font: loader.font
-        Layout.fillHeight: true
-    }
-
-    property bool in_edit_mode: false
+    property bool in_edit_mode: side_bar.edit_mode === 0
+    property bool in_optim_mode: side_bar.edit_mode === 1
 
 
     RowLayout {
@@ -58,7 +53,7 @@ FlowScreen {
                 delegate: CellDelegate {
                     implicitHeight: grid_view.row_height
                     implicitWidth: grid_view.column_width
-                    view_index: view_selection.currentIndex
+                    view_index: side_bar.view_type
                     fill_color: Util.color_with_alpha(Material.color(Constants.all_colors[column]), .60)
                 }
 
@@ -72,6 +67,8 @@ FlowScreen {
                         delegate: ExploreColumnHeader {
                             width: grid_view.column_width
                             height: grid_view.row_height
+
+                            enable_editing: root.in_optim_mode
                         }
                     }
                 }
@@ -116,6 +113,7 @@ FlowScreen {
                             anchors.margins: 5
                             Label {
                                 text: "Total Portfolio"
+                                font.bold: true
                             }
 
                             Label {
@@ -137,7 +135,7 @@ FlowScreen {
 
                                 height: grid_view.row_height
                                 width: grid_view.column_width - 1
-                                view_index: view_selection.currentIndex
+                                view_index: side_bar.view_type
                                 fill_color: Util.color_with_alpha(Material.color(Constants.all_colors[index]), .60)
                                 border.width: 0
 
@@ -160,58 +158,13 @@ FlowScreen {
 
         }
 
-        TransparentPane {
+        ExploreSideBar {
             id: side_bar
             Layout.fillHeight: true
-            Layout.preferredWidth: 180
             Layout.margins: 10
-
-            background_opacity: .75
-
-            ColumnLayout {
-                anchors.fill: parent
-                StackLayout {
-                    id: edit_stack
-
-                    Layout.fillWidth: true
-
-                    RoundButton {
-                        flat: true
-                        text: "\uf044"
-                        font: loader.font
-
-                        onClicked: {
-                            edit_stack.currentIndex = 1
-                            root.in_edit_mode = true
-                        }
-                    }
-
-                    Item {
-                        ColumnLayout {
-                            anchors.fill: parent
-                            Label {
-                                Layout.fillWidth: true
-                                text: "Edit investments in technologies, then tap simulate to see the result of these new alloctions"
-                                wrapMode: Label.WrapAtWordBoundaryOrAnywhere
-                            }
-                            Button {
-                                text: "Simulate"
-                                onClicked: sim_result_model.ask_run_scenario()
-                            }
-                        }
-                    }
-
-                }
-
-
-
-                ComboBox {
-                    id: view_selection
-                    Layout.fillWidth: true
-                    model: ["Boxes", "Violin"]
-                }
-            }
+            Layout.preferredWidth: 200
         }
+
     }
 
 }

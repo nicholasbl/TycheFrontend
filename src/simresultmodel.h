@@ -44,8 +44,11 @@ class SimResultModel : public QAbstractTableModel {
 
     QVector<float> m_all_cell_stats;
 
-    bool   m_edited;
-    qint64 m_total_value;
+    bool    m_edited                   = false;
+    qint64  m_total_value              = 0;
+    qint64  m_opt_portfolio_amount     = 0;
+    qint64  m_max_opt_portfolio_amount = 0;
+    QString m_current_scenario_name;
 
 
     Q_PROPERTY(QVector<float> all_cell_stats READ get_all_cell_stats WRITE
@@ -56,6 +59,18 @@ class SimResultModel : public QAbstractTableModel {
 
     Q_PROPERTY(qint64 total_value READ total_value WRITE set_total_value NOTIFY
                    total_value_changed FINAL)
+
+    Q_PROPERTY(QString current_scenario_name READ current_scenario_name WRITE
+                   set_current_scenario_name NOTIFY
+                       current_scenario_name_changed FINAL)
+
+    Q_PROPERTY(
+        qint64 opt_portfolio_amount READ opt_portfolio_amount WRITE
+            set_opt_portfolio_amount NOTIFY opt_portfolio_amount_changed FINAL)
+
+    Q_PROPERTY(qint64 max_opt_portfolio_amount READ max_opt_portfolio_amount
+                   WRITE set_max_opt_portfolio_amount NOTIFY
+                       opt_max_portfolio_amount_changed FINAL)
 
 private:
     Cell cell_at(int metric, int category) const;
@@ -94,11 +109,20 @@ public:
     qint64 total_value() const;
     void   set_total_value(qint64 newTotal_value);
 
-    void set_current_scenario(ScenarioRecord);
+    void    set_current_scenario(ScenarioRecord);
+    QString current_scenario_name() const;
+    void    set_current_scenario_name(const QString& newCurrent_scenario_name);
 
     void load_data_from(AskRunResult const&);
 
     void clear();
+
+
+    qint64 opt_portfolio_amount() const;
+    void   set_opt_portfolio_amount(qint64 newOpt_portfolio_amount);
+
+    qint64 max_opt_portfolio_amount() const;
+    void   set_max_opt_portfolio_amount(qint64 newMax_opt_portfolio_amount);
 
 private slots:
     void source_models_changed();
@@ -107,11 +131,18 @@ private slots:
 
 public slots:
     void ask_run_scenario();
+    void ask_run_optimize();
 
 signals:
     void all_cell_stats_changed();
     void editedChanged();
     void total_value_changed();
+    void current_scenario_name_changed();
+    void opt_portfolio_amount_changed();
+    void opt_max_portfolio_amount_changed();
+
+
+    void error_from_sim(QString);
 };
 
 

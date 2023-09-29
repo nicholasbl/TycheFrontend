@@ -97,8 +97,6 @@ int main(int argc, char* argv[]) {
                                              sim_result_model);
                      });
 
-    scenario_model.refresh_scenario_list();
-
     qDebug() << "Model setup complete";
 
     QQmlApplicationEngine engine;

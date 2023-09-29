@@ -1,5 +1,7 @@
 #include "scenariomodel.h"
 
+#include "networkcontroller.h"
+
 #include <QUuid>
 
 // =============================================================================
@@ -21,26 +23,24 @@ void ScenarioModel::refresh_scenario_list() {
     auto* reply = JSONRpcMethod::invoke("get_scenarios");
 
     connect(reply,
-            &JSONRpcMethod::request_completed,
+            &JSONRpcMethod::request_success,
             this,
             &ScenarioModel::new_scenario_list);
+    connect(reply,
+            &JSONRpcMethod::request_failure,
+            this,
+            &ScenarioModel::scenario_fetch_failure);
 }
 
-void ScenarioModel::new_scenario_list(MethodResult result) {
+void ScenarioModel::new_scenario_list(QJsonValue result) {
     qDebug() << Q_FUNC_INFO;
-    result.visit(
-        [this](QJsonValue result) {
-            QVector<ScenarioRecord> record_list;
-            from_json(result.toArray(), record_list);
-            replace(record_list);
-            qDebug() << "Reset scenario";
-            if (m_current_scenario != 0) {
-                set_current_scenario(0);
-            } else {
-                emit current_scenario_changed();
-            }
-        },
-        [](QString error) {
-            qCritical() << "ERROR getting new list:" << error;
-        });
+
+    QVector<ScenarioRecord> record_list;
+    from_json(result.toArray(), record_list);
+    replace(record_list);
+    if (m_current_scenario != 0) {
+        set_current_scenario(0);
+    } else {
+        emit current_scenario_changed();
+    }
 }

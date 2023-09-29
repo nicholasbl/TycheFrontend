@@ -24,13 +24,6 @@ StackLayout {
             property Item fade_out_target
             property Item fade_in_target
 
-            onStarted: {
-                console.log("Starting fade anim", this)
-            }
-            onStopped: {
-                console.log("Stopping fade anim", this)
-            }
-
             ParallelAnimation {
 
                 NumberAnimation {

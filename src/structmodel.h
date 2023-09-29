@@ -287,6 +287,20 @@ public:
         }
     }
 
+    template <class Function>
+    void update_all(Function&& f) {
+        if (m_records.isEmpty()) return;
+
+        for (auto i = 0; i < rowCount(); i++) {
+            Record& r = m_records[i];
+            f(r, i);
+        }
+        auto left  = index(0, 0);
+        auto right = index(rowCount() - 1, columnCount() - 1);
+
+        emit dataChanged(left, right);
+    }
+
     auto const& vector() const { return m_records; }
 
     auto begin() const { return m_records.begin(); }

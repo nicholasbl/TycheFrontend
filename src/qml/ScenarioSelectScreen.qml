@@ -64,4 +64,36 @@ FlowScreen {
         }
     }
 
+    Popup {
+        id: request_fail_pop
+
+        anchors.centerIn: Overlay.overlay
+
+        ColumnLayout {
+            Label {
+                id: failure_reason
+                text: "Unknown error"
+                wrapMode: Label.WrapAtWordBoundaryOrAnywhere
+            }
+            Button {
+                text: "Retry..."
+                highlighted: true
+                flat: true
+                Layout.alignment: Qt.AlignRight
+                onClicked: {
+                    scenario_model.refresh_scenario_list();
+                    request_fail_pop.close()
+                }
+            }
+        }
+
+
+    }
+
+    Component.onCompleted: {
+        scenario_model.scenario_fetch_failure.connect(function(err_str){
+            failure_reason.text = "An error occurred while attempting to fetch the scenario list. The reason given was: " + err_str
+            request_fail_pop.open()
+        })
+    }
 }
