@@ -43,5 +43,6 @@
         <file>qml/FadingStack.qml</file>
         <file>qml/ExploreSideBar.qml</file>
         <file>qml/EditLabel.qml</file>
+        <file>qml/ExportPopup.qml</file>
     </qresource>
 </RCC>

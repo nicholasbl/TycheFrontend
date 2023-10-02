@@ -86,6 +86,26 @@ QHash<int, QByteArray> const& get_name_map() {
     return ret;
 }
 
+template <class Record, class ReturnType>
+int role_for_member(ReturnType Record::*ptr) {
+    // Need to find a nice way to have a compile error on missing meta
+    int ret       = -1;
+    using PtrType = decltype(ptr);
+    int i         = 0;
+    tuple_for_each(Record::meta, [&i, &ret, ptr](auto const& thing) {
+        using LT = decltype(thing.access);
+
+        if constexpr (std::is_same_v<LT, PtrType>) {
+            if (thing.access == ptr) ret = Qt::UserRole + i;
+        }
+        i++;
+    });
+
+    Q_ASSERT(ret >= 0);
+
+    return ret;
+}
+
 template <class Record>
 QVariant record_runtime_get(Record const& r, int i) {
     QVariant ret;

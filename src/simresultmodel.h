@@ -4,6 +4,7 @@
 #include "structmodel.h"
 
 #include <QAbstractTableModel>
+#include <QImage>
 #include <QPointer>
 
 class SelectedCategoryModel;
@@ -132,6 +133,8 @@ private slots:
 public slots:
     void ask_run_scenario();
     void ask_run_optimize();
+
+    void ask_save_image(QImage);
 
 signals:
     void all_cell_stats_changed();

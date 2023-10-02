@@ -19,7 +19,6 @@ FlowScreen {
             Layout.margins: 10
             Layout.fillWidth: true
             Layout.fillHeight: true
-            //background_opacity: .3
 
             ColumnLayout {
                 anchors.fill: parent

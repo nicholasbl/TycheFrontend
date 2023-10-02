@@ -69,22 +69,54 @@ FlowScreen {
 
         anchors.centerIn: Overlay.overlay
 
+        modal: true
+
         ColumnLayout {
-            Label {
-                id: failure_reason
-                text: "Unknown error"
-                wrapMode: Label.WrapAtWordBoundaryOrAnywhere
-            }
-            Button {
-                text: "Retry..."
-                highlighted: true
-                flat: true
-                Layout.alignment: Qt.AlignRight
-                onClicked: {
-                    scenario_model.refresh_scenario_list();
-                    request_fail_pop.close()
+            anchors.fill: parent
+            RowLayout {
+                Label {
+                    text: "\uf071"
+                    font: loader.font
+
+                    color: Material.color(Material.Red)
+
+                    Component.onCompleted: {
+                        font.pointSize = 48
+                    }
+                }
+
+                Label {
+                    Layout.maximumWidth: 250
+                    id: failure_reason
+                    text: "Unknown error"
+                    wrapMode: Label.WrapAtWordBoundaryOrAnywhere
                 }
             }
+
+            RowLayout{
+                Layout.alignment: Qt.AlignRight
+                Button {
+                    text: "Close"
+                    highlighted: true
+                    flat: true
+
+                    onClicked: {
+                        request_fail_pop.close()
+                    }
+                }
+
+                Button {
+                    text: "Retry..."
+                    highlighted: true
+                    flat: true
+                    onClicked: {
+                        scenario_model.refresh_scenario_list();
+                        request_fail_pop.close()
+                    }
+                }
+
+            }
+
         }
 
 
@@ -92,7 +124,7 @@ FlowScreen {
 
     Component.onCompleted: {
         scenario_model.scenario_fetch_failure.connect(function(err_str){
-            failure_reason.text = "An error occurred while attempting to fetch the scenario list. The reason given was: " + err_str
+            failure_reason.text = "An error occurred while attempting to fetch the scenario list. The reason given was: <b>" + err_str + "</b>. You can retry the fetch; if the issue persists, please contact the relevant administrators."
             request_fail_pop.open()
         })
     }

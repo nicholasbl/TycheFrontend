@@ -46,7 +46,15 @@ public slots:
 // =============================================================================
 
 class SelectedCategoryModel : public QSortFilterProxyModel {
+    Q_OBJECT
+
     QPointer<CategoryModel> m_host;
+
+    qint64 m_maximum_investment;
+
+    Q_PROPERTY(
+        qint64 maximum_investment READ maximum_investment WRITE
+            set_maximum_investment NOTIFY maximum_investment_changed FINAL)
 
 public:
     SelectedCategoryModel(CategoryModel*);
@@ -57,4 +65,11 @@ public:
     CategoryRecord const* get_at(int) const;
 
     CategoryModel* host() const { return m_host; }
+    qint64         maximum_investment() const;
+    void           set_maximum_investment(qint64 newMaximum_investment);
+signals:
+    void maximum_investment_changed();
+
+private slots:
+    void recompute_stats();
 };

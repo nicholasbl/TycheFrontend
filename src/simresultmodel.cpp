@@ -5,6 +5,10 @@
 #include "networkcontroller.h"
 #include "stat_math.h"
 
+#include <QBuffer>
+#include <QByteArray>
+#include <QFileDialog>
+
 struct CatState {
     int investment;
 
@@ -431,6 +435,19 @@ void SimResultModel::ask_run_optimize() {
             from_json(doc, new_sim_data);
             load_data_from(new_sim_data);
         });
+}
+
+void SimResultModel::ask_save_image(QImage image) {
+#ifdef Q_PROCESSOR_WASM
+    QByteArray image_data;
+    QBuffer    buffer(&image_data);
+    image.save(&buffer, "PNG");
+    QFileDialog::saveFileContent("simulation_results.png", image_data);
+#else
+    auto name = QFileDialog::getSaveFileName(nullptr, "Save Image");
+
+    if (!name.isEmpty()) { image.save(name); }
+#endif
 }
 
 // =============================================================================

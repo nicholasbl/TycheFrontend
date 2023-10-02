@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 2.15
 
+import QtCharts
+
 import "Global"
 import "./utility.js" as Util
 
@@ -48,6 +50,43 @@ TransparentPane {
                         text: "Edit investments in technologies, then tap simulate to see the result of these new alloctions"
                         wrapMode: Label.WrapAtWordBoundaryOrAnywhere
                     }
+
+                    GroupBox {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 250
+                        title: "Distribution"
+                        Material.roundedScale: Material.SmallScale
+                        Row {
+                            id: distro_bar_chart
+                            anchors.fill: parent
+
+                            spacing: 5
+
+                            Repeater {
+                                id: bar_repeater
+                                model: selected_category_model
+                                delegate: Rectangle {
+                                    width: distro_bar_chart.width / bar_repeater.count - 5
+                                    height: Math.max(distro_bar_chart.height * investment / selected_category_model.maximum_investment,1)
+                                    radius: 5
+
+                                    color: Util.color_with_alpha(Material.color(Constants.all_colors[index]), .60)
+
+                                    anchors.bottom: distro_bar_chart.bottom
+
+                                    Label {
+                                        text: name
+                                        rotation: -90
+                                        transformOrigin: Item.Left
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: height
+                                        anchors.bottom: parent.bottom
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     Rectangle {
                         Layout.preferredHeight: 2
                         Layout.fillWidth: true
@@ -134,7 +173,13 @@ TransparentPane {
                     Button {
                         Layout.columnSpan: 2
                         text: "Export"
-                        flat: true
+                        Layout.fillWidth: true
+
+                        onClicked: export_pop.open()
+
+                        ExportPopup {
+                            id: export_pop
+                        }
                     }
                     Item {
                         Layout.fillHeight: true

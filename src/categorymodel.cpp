@@ -45,6 +45,21 @@ void CategoryModel::finalize_choices() {
 
 SelectedCategoryModel::SelectedCategoryModel(CategoryModel* ptr) : m_host(ptr) {
     setSourceModel(ptr);
+
+    connect(ptr,
+            &CategoryModel::dataChanged,
+            this,
+            &SelectedCategoryModel::recompute_stats);
+
+    connect(ptr,
+            &CategoryModel::rowsInserted,
+            this,
+            &SelectedCategoryModel::recompute_stats);
+
+    connect(ptr,
+            &CategoryModel::rowsRemoved,
+            this,
+            &SelectedCategoryModel::recompute_stats);
 }
 
 bool SelectedCategoryModel::filterAcceptsRow(
@@ -62,4 +77,34 @@ bool SelectedCategoryModel::filterAcceptsRow(
 
 CategoryRecord const* SelectedCategoryModel::get_at(int row) const {
     return m_host->get_at(mapToSource(index(row, 0)).row());
+}
+
+qint64 SelectedCategoryModel::maximum_investment() const {
+    return m_maximum_investment;
+}
+
+void SelectedCategoryModel::set_maximum_investment(
+    qint64 newMaximum_investment) {
+    if (m_maximum_investment == newMaximum_investment) return;
+    m_maximum_investment = newMaximum_investment;
+    emit maximum_investment_changed();
+}
+
+void SelectedCategoryModel::recompute_stats() {
+    qDebug() << Q_FUNC_INFO;
+    int role = role_for_member(&CategoryRecord::investment);
+
+    qDebug() << Q_FUNC_INFO << "Role is" << role << m_host->roleNames();
+
+    quint64 max = 0;
+
+    for (int i = 0; i < rowCount(); i++) {
+        auto d = data(index(i, 0), role).toULongLong();
+        max    = std::max(d, max);
+        qDebug() << Q_FUNC_INFO << "Item is" << d;
+    }
+
+    qDebug() << Q_FUNC_INFO << "Max is" << max;
+
+    set_maximum_investment(max);
 }
