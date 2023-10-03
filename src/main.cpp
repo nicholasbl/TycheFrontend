@@ -4,6 +4,7 @@
 #include <QQmlContext>
 #include <QSurfaceFormat>
 
+#include "archivemodel.h"
 #include "categorymodel.h"
 #include "metricmodel.h"
 #include "networkcontroller.h"
@@ -81,8 +82,13 @@ int main(int argc, char* argv[]) {
 
     SimResultSumModel sim_result_sum;
 
-    SimResultModel sim_result_model(
-        &selected_metric_model, &selected_category_model, &sim_result_sum);
+    ArchiveModel sim_archive_model;
+
+    SimResultModel sim_result_model(&selected_metric_model,
+                                    &selected_category_model,
+                                    &sim_result_sum,
+                                    &sim_archive_model);
+
 
     qDebug() << "Models constructed";
 
@@ -114,6 +120,7 @@ int main(int argc, char* argv[]) {
     register_as(&selected_category_model, "selected_category_model");
     register_as(&sim_result_model, "sim_result_model");
     register_as(&sim_result_sum, "sim_result_sum_model");
+    register_as(&sim_archive_model, "archive_model");
 
     qDebug() << "Models installed";
 

@@ -1,90 +1,14 @@
 #include "simresultmodel.h"
 
+#include "archivemodel.h"
 #include "categorymodel.h"
 #include "metricmodel.h"
-#include "networkcontroller.h"
+#include "simresultdata.h"
 #include "stat_math.h"
 
 #include <QBuffer>
 #include <QByteArray>
 #include <QFileDialog>
-
-struct CatState {
-    int investment;
-
-    template <class Archive>
-    void archive(Archive& a) {
-        a("investment", investment);
-    }
-};
-
-struct AskRunScenario {
-
-
-    QString           scenario_id;
-    QVector<CatState> category_states;
-
-    template <class Archive>
-    void archive(Archive& a) {
-        a("scenario_id", scenario_id);
-        a("category_states", category_states);
-    }
-};
-
-// =============================================================================
-
-struct AskReplyCell {
-    QVector<float> values;
-
-    template <class Archive>
-    void archive(Archive& a) {
-        a("x", values);
-    }
-};
-
-struct AskRunResult {
-    QString scenario_id;
-
-    QVector<int> cat_state;
-    QVector<int> met_state;
-
-    QVector<QVector<AskReplyCell>> cells;
-
-    template <class Archive>
-    void archive(Archive& a) {
-        a("scenario_id", scenario_id);
-        a("category_state", cat_state);
-        a("metric_state", met_state);
-        a("cells", cells);
-    }
-};
-
-// =============================================================================
-struct AskRunOptimMetric {
-    float   value;
-    QString bound_type;
-
-    template <class Archive>
-    void archive(Archive& a) {
-        a("value", value);
-        a("bound_type", bound_type);
-    }
-};
-
-struct AskRunOptim {
-    QString                    scenario_id;
-    int                        portfolio;
-    QString                    opt_method;
-    QVector<AskRunOptimMetric> metric_states;
-
-    template <class Archive>
-    void archive(Archive& a) {
-        a("scenario_id", scenario_id);
-        a("portfolio", portfolio);
-        a("opt_method", opt_method);
-        a("metric_states", metric_states);
-    }
-};
 
 // =============================================================================
 
@@ -150,11 +74,13 @@ void SimResultModel::replace_cells(QVector<Cell> new_cells) {
 SimResultModel::SimResultModel(SelectedMetricModel*   m,
                                SelectedCategoryModel* c,
                                SimResultSumModel*     sum,
+                               ArchiveModel*          ar,
                                QObject*               parent)
     : QAbstractTableModel(parent),
       m_metrics(m),
       m_categories(c),
-      m_sim_sum_model(sum) {
+      m_sim_sum_model(sum),
+      m_archive_model(ar) {
 
     m_all_cell_stats = { 0, 1 };
 
@@ -180,6 +106,18 @@ SimResultModel::SimResultModel(SelectedMetricModel*   m,
             &SelectedCategoryModel::dataChanged,
             this,
             &SimResultModel::recompute_total_value);
+
+    connect(ar,
+            &ArchiveModel::data_selected,
+            this,
+            &SimResultModel::load_data_from);
+
+    // This is now part of the UI
+    //    connect(ar, &ArchiveModel::new_run_ready, this, [this]() {
+    //        auto rc = m_archive_model->rowCount() - 1;
+    //        auto* ptr = m_archive_model->get_at(rc);
+    //        load_data_from(*ptr);
+    //    });
 }
 
 
@@ -228,15 +166,6 @@ void SimResultModel::source_models_changed() {
 
     // build new
     QVector<Cell> new_cells(m_metrics->rowCount() * m_categories->rowCount());
-
-
-    // TODO: Remove
-    for (auto m_i = 0; m_i < m_metrics->rowCount(); m_i++) {
-        for (auto c_i = 0; c_i < m_categories->rowCount(); c_i++) {
-            auto idx       = index_at(m_i, c_i);
-            new_cells[idx] = Cell(generate_random_testing_data(m_i * 10, 10));
-        }
-    }
 
     replace_cells(new_cells);
 
@@ -304,12 +233,36 @@ void SimResultModel::set_all_cell_stats(QVector<float> newAll_cell_stats) {
 }
 
 void SimResultModel::set_current_scenario(ScenarioRecord record) {
+    if (record.uuid == m_current_scenario.uuid) return;
+
+    // set up basics
+
     m_current_scenario = record;
     set_current_scenario_name(record.name);
+
+    // now set up ancillary parts
+    m_metrics->host()->replace(record.metrics);
+    m_categories->host()->replace(record.categories);
 }
 
-void SimResultModel::load_data_from(AskRunResult const& result) {
+void SimResultModel::load_data_from(RunArchive const& archive) {
     qDebug() << Q_FUNC_INFO;
+
+    set_current_scenario(archive.scenario);
+
+    // set up proper selections
+
+    {
+        m_metrics->host()->update_all([&](auto& v, int i) {
+            v.selected = archive.selected_metrics.contains(i);
+        });
+
+        m_categories->host()->update_all([&](auto& v, int i) {
+            v.selected = archive.selected_categories.contains(i);
+        });
+    }
+
+    auto const& result = archive.run_result;
 
     // resize
     QVector<Cell> new_cells(m_metrics->rowCount() * m_categories->rowCount());
@@ -321,8 +274,6 @@ void SimResultModel::load_data_from(AskRunResult const& result) {
 
     auto& main_cat = *m_categories->host();
     auto& main_met = *m_metrics->host();
-
-    // once again assume all is the same
 
     main_cat.update_all([&](CategoryRecord& r, int i) {
         r.investment = result.cat_state.value(i);
@@ -389,20 +340,10 @@ void SimResultModel::ask_run_scenario() {
         };
     }
 
-    auto* method =
-        JSONRpcMethod::invoke("run_scenario", QJsonArray() << to_json(state));
-
-    connect(method,
-            &JSONRpcMethod::request_failure,
-            this,
-            &SimResultModel::error_from_sim);
-
-    connect(
-        method, &JSONRpcMethod::request_success, this, [this](QJsonValue doc) {
-            AskRunResult new_sim_data;
-            from_json(doc, new_sim_data);
-            load_data_from(new_sim_data);
-        });
+    m_archive_model->ask_run_scenario(state,
+                                      m_current_scenario,
+                                      m_metrics->host()->selected_indices(),
+                                      m_categories->host()->selected_indices());
 }
 
 void SimResultModel::ask_run_optimize() {
@@ -421,20 +362,10 @@ void SimResultModel::ask_run_optimize() {
         };
     }
 
-    auto* method = JSONRpcMethod::invoke("optimize_scenario",
-                                         QJsonArray() << to_json(state));
-
-    connect(method,
-            &JSONRpcMethod::request_failure,
-            this,
-            &SimResultModel::error_from_sim);
-
-    connect(
-        method, &JSONRpcMethod::request_success, this, [this](QJsonValue doc) {
-            AskRunResult new_sim_data;
-            from_json(doc, new_sim_data);
-            load_data_from(new_sim_data);
-        });
+    m_archive_model->ask_run_optimize(state,
+                                      m_current_scenario,
+                                      m_metrics->host()->selected_indices(),
+                                      m_categories->host()->selected_indices());
 }
 
 void SimResultModel::ask_save_image(QImage image) {

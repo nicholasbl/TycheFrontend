@@ -2,8 +2,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 2.15
 
-import QtCharts
-
 import "Global"
 import "./utility.js" as Util
 
@@ -16,6 +14,66 @@ TransparentPane {
 
     ColumnLayout {
         anchors.fill: parent
+
+        ListView {
+            id: archive_view
+            Layout.fillWidth: true
+            Layout.preferredHeight: 74
+            orientation: ListView.Horizontal
+            highlightFollowsCurrentItem: true
+            spacing: 5
+
+            model: archive_model
+
+            clip: true
+
+            delegate: ArchiveDelegate {
+                id: del
+                width: 72
+                height: 72
+
+                onClicked: {
+                    archive_view.currentIndex = index
+                }
+
+                state: del.ListView.isCurrentItem ? "selected" : ""
+            }
+
+            Label {
+                anchors.fill: parent
+                horizontalAlignment: Label.AlignHCenter
+                verticalAlignment: Label.AlignVCenter
+                text: "No sims yet..."
+                opacity: archive_view.count === 0
+            }
+
+            onCurrentIndexChanged: {
+                archive_model.select_run(currentIndex)
+            }
+
+            Component.onCompleted: {
+                archive_model.new_run_ready.connect(function(){
+                    archive_view.currentIndex = archive_view.count - 1
+                })
+            }
+
+            EditLabel {
+                text: "\uf31e"
+                font: loader.font
+
+                anchors.top: parent.top
+                anchors.right: parent.right
+
+                onClicked: {
+                    archive_explore_pop.open()
+                }
+
+                ArchiveExplorePopup {
+                    id: archive_explore_pop
+                }
+            }
+        }
+
         TabBar {
             id: mode_bar
             Layout.fillWidth: true
@@ -53,7 +111,7 @@ TransparentPane {
 
                     GroupBox {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 250
+                        Layout.preferredHeight: 200
                         title: "Distribution"
                         Material.roundedScale: Material.SmallScale
                         Row {

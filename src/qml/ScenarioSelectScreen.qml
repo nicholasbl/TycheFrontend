@@ -64,12 +64,18 @@ FlowScreen {
         }
     }
 
-    Popup {
+    Dialog {
         id: request_fail_pop
+
+        title: "Error"
 
         anchors.centerIn: Overlay.overlay
 
-        modal: true
+        standardButtons: Dialog.Close | Dialog.Retry
+
+        onAccepted: {
+            scenario_model.refresh_scenario_list();
+        }
 
         ColumnLayout {
             anchors.fill: parent
@@ -91,30 +97,6 @@ FlowScreen {
                     text: "Unknown error"
                     wrapMode: Label.WrapAtWordBoundaryOrAnywhere
                 }
-            }
-
-            RowLayout{
-                Layout.alignment: Qt.AlignRight
-                Button {
-                    text: "Close"
-                    highlighted: true
-                    flat: true
-
-                    onClicked: {
-                        request_fail_pop.close()
-                    }
-                }
-
-                Button {
-                    text: "Retry..."
-                    highlighted: true
-                    flat: true
-                    onClicked: {
-                        scenario_model.refresh_scenario_list();
-                        request_fail_pop.close()
-                    }
-                }
-
             }
 
         }

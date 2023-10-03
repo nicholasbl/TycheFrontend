@@ -44,5 +44,7 @@
         <file>qml/ExploreSideBar.qml</file>
         <file>qml/EditLabel.qml</file>
         <file>qml/ExportPopup.qml</file>
+        <file>qml/ArchiveDelegate.qml</file>
+        <file>qml/ArchiveExplorePopup.qml</file>
     </qresource>
 </RCC>

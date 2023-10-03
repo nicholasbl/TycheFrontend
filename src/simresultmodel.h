@@ -10,8 +10,9 @@
 class SelectedCategoryModel;
 class SelectedMetricModel;
 class SimResultSumModel;
+class ArchiveModel;
 
-struct AskRunResult;
+struct RunArchive;
 
 struct Cell {
     QVector<float> raw_data;
@@ -38,6 +39,7 @@ class SimResultModel : public QAbstractTableModel {
     QPointer<SelectedMetricModel>   m_metrics;
     QPointer<SelectedCategoryModel> m_categories;
     QPointer<SimResultSumModel>     m_sim_sum_model;
+    QPointer<ArchiveModel>          m_archive_model;
 
     ScenarioRecord m_current_scenario;
 
@@ -91,6 +93,7 @@ public:
     explicit SimResultModel(SelectedMetricModel*,
                             SelectedCategoryModel*,
                             SimResultSumModel*,
+                            ArchiveModel*,
                             QObject* parent = nullptr);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -114,8 +117,6 @@ public:
     QString current_scenario_name() const;
     void    set_current_scenario_name(const QString& newCurrent_scenario_name);
 
-    void load_data_from(AskRunResult const&);
-
     void clear();
 
 
@@ -136,6 +137,8 @@ public slots:
 
     void ask_save_image(QImage);
 
+    void load_data_from(RunArchive const&);
+
 signals:
     void all_cell_stats_changed();
     void editedChanged();
@@ -143,9 +146,6 @@ signals:
     void current_scenario_name_changed();
     void opt_portfolio_amount_changed();
     void opt_max_portfolio_amount_changed();
-
-
-    void error_from_sim(QString);
 };
 
 

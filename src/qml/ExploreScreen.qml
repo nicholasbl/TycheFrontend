@@ -167,44 +167,33 @@ FlowScreen {
 
     }
 
-    Popup {
+    Dialog {
         id: sim_fail_pop
 
         anchors.centerIn: Overlay.overlay
 
-        modal: true
+        title: "Error"
 
-        ColumnLayout {
+        standardButtons: Dialog.Close
+
+        RowLayout {
             anchors.fill: parent
-            RowLayout {
-                Label {
-                    text: "\uf071"
-                    font: loader.font
+            Label {
+                text: "\uf071"
+                font: loader.font
 
-                    color: Material.color(Material.Red)
+                color: Material.color(Material.Red)
 
-                    Component.onCompleted: {
-                        font.pointSize = 24
-                    }
-                }
-
-                Label {
-                    Layout.maximumWidth: 250
-                    id: failure_reason
-                    text: "Unknown error"
-                    wrapMode: Label.WrapAtWordBoundaryOrAnywhere
+                Component.onCompleted: {
+                    font.pointSize = 24
                 }
             }
 
-
-            Button {
-                text: "Close"
-                highlighted: true
-                flat: true
-                Layout.alignment: Qt.AlignRight
-                onClicked: {
-                    sim_fail_pop.close()
-                }
+            Label {
+                Layout.maximumWidth: 250
+                id: failure_reason
+                text: "Unknown error"
+                wrapMode: Label.WrapAtWordBoundaryOrAnywhere
             }
         }
 
@@ -212,7 +201,7 @@ FlowScreen {
     }
 
     Component.onCompleted: {
-        sim_result_model.error_from_sim.connect(function(err_str){
+        archive_model.error_from_sim.connect(function(err_str){
             failure_reason.text = "An error occurred while executing the requested simulation. The reason given was: <b>" + err_str + "</b>. You can try again; if the issue persists, please contact the relevant administrators."
             sim_fail_pop.open()
         })

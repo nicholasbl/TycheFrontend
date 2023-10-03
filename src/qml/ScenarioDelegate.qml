@@ -109,7 +109,7 @@ TransparentPane {
     transitions: Transition {
         ColorAnimation {
             properties: "background_color"
-            duration: 500
+            duration: 250
         }
     }
 }

@@ -41,6 +41,8 @@ public:
 
 public slots:
     void finalize_choices();
+
+    QSet<int> selected_indices();
 };
 
 // =============================================================================

@@ -46,6 +46,8 @@ class MetricModel : public StructTableModel<MetricRecord> {
 public:
     explicit MetricModel(QObject* parent = nullptr);
 
+    QSet<int> selected_indices();
+
 public slots:
     void finalize_choices();
 };

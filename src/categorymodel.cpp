@@ -4,12 +4,15 @@
 
 CategoryModel::CategoryModel(QObject* parent) : StructTableModel(parent) { }
 
-// QJsonObject CategoryRecord::to_request_object() const {
-//     return {
-//         { "name", name },
-//         { "investment", investment },
-//     };
-// }
+QSet<int> CategoryModel::selected_indices() {
+    QSet<int> ret;
+
+    for (int i = 0; i < rowCount(); i++) {
+        if (get_at(i)->selected) ret << i;
+    }
+
+    return ret;
+}
 
 void CategoryModel::finalize_choices() {
     // qDebug() << Q_FUNC_INFO;

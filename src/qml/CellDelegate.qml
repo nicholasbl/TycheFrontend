@@ -24,7 +24,18 @@ Rectangle {
         anchors.fill: parent
         anchors.margins: 10
 
-        currentIndex: view_index
+        currentIndex: {
+            if (raw_data.length === 0) {
+                return 0
+            }
+            return view_index + 1
+        }
+
+        Label {
+            text: "Awaiting data..."
+
+            horizontalAlignment: Qt.AlignHCenter
+        }
 
         BarChart {
             id: bar_chart
