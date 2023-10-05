@@ -9,14 +9,17 @@ struct CategoryRecord {
     QString name;
     QString description;
     QString image;
-    int     investment;
-    int     max_investment = 1000000;
+    QString id;
+
+    qint64 investment     = 0;
+    qint64 max_investment = 1000000;
 
     bool selected = false;
 
     MAKE_META(MetaMember(&CategoryRecord::name, "name"),
               MetaMember(&CategoryRecord::description, "description"),
               MetaMember(&CategoryRecord::image, "image"),
+              MetaMember(&CategoryRecord::id, "category_id"),
               MetaMember(&CategoryRecord::investment, "investment", true),
               MetaMember(&CategoryRecord::max_investment, "max_investment"),
               MetaMember(&CategoryRecord::selected, "selected", true));
@@ -26,6 +29,7 @@ struct CategoryRecord {
         a("name", name);
         a("description", description);
         a("image", image);
+        a("id", id);
         a("starting_investment", investment);
         a("max_investment", max_investment);
     }
@@ -42,7 +46,7 @@ public:
 public slots:
     void finalize_choices();
 
-    QSet<int> selected_indices();
+    QSet<QString> selected_indices();
 };
 
 // =============================================================================
@@ -69,6 +73,15 @@ public:
     CategoryModel* host() const { return m_host; }
     qint64         maximum_investment() const;
     void           set_maximum_investment(qint64 newMaximum_investment);
+
+    template <class Function>
+    void enumerate(Function&& f) {
+        for (auto i = 0; i < rowCount(); i++) {
+            CategoryRecord const& r = *get_at(i);
+            f(r, i);
+        }
+    }
+
 signals:
     void maximum_investment_changed();
 

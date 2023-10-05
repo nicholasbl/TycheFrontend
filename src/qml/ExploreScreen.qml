@@ -36,16 +36,25 @@ FlowScreen {
 
                 clip: true
 
-                property real column_width: (grid_view.width) / (columns + 1)
+                property real column_width: Math.min((grid_view.width) / (columns + 1), 300)
                 property real row_height: column_width / 3
 
                 leftMargin: column_width
                 topMargin: row_height
 
+                //onContentXChanged: {
+                //    console.log("CX", contentX)
+                //}
+
                 property bool layout_recompute : {
                     width
                     height
-                    forceLayout()
+                    columns
+                    rows
+                    //positionViewAtCell(Qt.point(10,10), TableView.Contain)
+                    //contentX = column_width
+                    //contentY = row_height
+                    console.log("Recomputing layout")
                     return true
                 }
 
@@ -177,7 +186,6 @@ FlowScreen {
         standardButtons: Dialog.Close
 
         RowLayout {
-            anchors.fill: parent
             Label {
                 text: "\uf071"
                 font: loader.font

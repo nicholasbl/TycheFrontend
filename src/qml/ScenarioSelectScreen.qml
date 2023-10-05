@@ -78,7 +78,6 @@ FlowScreen {
         }
 
         ColumnLayout {
-            anchors.fill: parent
             RowLayout {
                 Label {
                     text: "\uf071"

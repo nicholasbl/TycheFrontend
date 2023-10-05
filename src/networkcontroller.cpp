@@ -148,6 +148,8 @@ JSONRpcMethod::JSONRpcMethod(QString                host,
     qnetwork_request.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader,
                                "application/json");
 
+    // qnetwork_request.setRawHeader("Access-Control-Allow-Origin", "*");
+
 
     auto* reply =
         parent->post(qnetwork_request, QJsonDocument(request_object).toJson());

@@ -1,23 +1,15 @@
 #pragma once
 
 #include <QDateTime>
+#include <QHash>
 #include <QString>
 #include <QVector>
 
 #include "scenariomodel.h"
 
-struct CatState {
-    int investment;
-
-    template <class Archive>
-    void archive(Archive& a) {
-        a("investment", investment);
-    }
-};
-
 struct AskRunScenario {
-    QString           scenario_id;
-    QVector<CatState> category_states;
+    QString                scenario_id;
+    QHash<QString, qint64> category_states;
 
     template <class Archive>
     void archive(Archive& a) {
@@ -40,10 +32,10 @@ struct AskReplyCell {
 struct AskRunResult {
     QString scenario_id;
 
-    QVector<int> cat_state;
-    QVector<int> met_state;
+    QHash<QString, qint64> cat_state;
+    QHash<QString, qint64> met_state;
 
-    QVector<QVector<AskReplyCell>> cells;
+    QHash<QString, QHash<QString, QVector<float>>> cells;
 
     template <class Archive>
     void archive(Archive& a) {
@@ -69,7 +61,7 @@ struct AskRunOptimMetric {
 
 struct AskRunOptim {
     QString                    scenario_id;
-    int                        portfolio;
+    qint64                     portfolio;
     QString                    opt_method;
     QVector<AskRunOptimMetric> metric_states;
 
@@ -91,8 +83,8 @@ struct RunArchive {
     ScenarioRecord scenario;
     QDateTime      time_date;
     AskRunResult   run_result;
-    QSet<int>      selected_metrics;
-    QSet<int>      selected_categories;
+    QSet<QString>  selected_metrics;
+    QSet<QString>  selected_categories;
 
     MAKE_META(MetaMember(&RunArchive::archive_name, "name", true),
               MetaMember(&RunArchive::type, "type"),

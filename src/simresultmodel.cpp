@@ -253,12 +253,12 @@ void SimResultModel::load_data_from(RunArchive const& archive) {
     // set up proper selections
 
     {
-        m_metrics->host()->update_all([&](auto& v, int i) {
-            v.selected = archive.selected_metrics.contains(i);
+        m_metrics->host()->update_all([&](auto& v, int) {
+            v.selected = archive.selected_metrics.contains(v.id);
         });
 
-        m_categories->host()->update_all([&](auto& v, int i) {
-            v.selected = archive.selected_categories.contains(i);
+        m_categories->host()->update_all([&](auto& v, int) {
+            v.selected = archive.selected_categories.contains(v.id);
         });
     }
 
@@ -273,43 +273,46 @@ void SimResultModel::load_data_from(RunArchive const& archive) {
     }
 
     auto& main_cat = *m_categories->host();
-    auto& main_met = *m_metrics->host();
+    // auto& main_met = *m_metrics->host();
 
-    main_cat.update_all([&](CategoryRecord& r, int i) {
-        r.investment = result.cat_state.value(i);
+    main_cat.update_all([&](CategoryRecord& r, int) {
+        r.investment = result.cat_state.value(r.id);
     });
 
 
     // TODO: replace with two models; one for data, second for a filtered table.
 
-    for (auto c_i = 0; c_i < result.cells.size(); c_i++) {
+    // we put BOTH cat and metric ids in here. after all, they are using
+    // UUIDs...
+    QHash<QString, int> id_to_index;
 
-        auto dest_cat_index =
-            m_categories->mapFromSource(main_cat.index(c_i, 0));
+    m_categories->enumerate(
+        [&](auto const& v, int idx) { id_to_index[v.id] = idx; });
+    m_metrics->enumerate(
+        [&](auto const& v, int idx) { id_to_index[v.id] = idx; });
 
-        if (!dest_cat_index.isValid()) {
-            // qDebug() << Q_FUNC_INFO << "Category" << c_i << "invalid";
-            continue;
-        }
+    for (auto cat_iter = result.cells.begin(); cat_iter != result.cells.end();
+         ++cat_iter) {
 
-        auto const& this_cat = result.cells[c_i];
+        auto const& cat_id = cat_iter.key();
 
-        for (auto m_i = 0; m_i < this_cat.length(); m_i++) {
+        if (!id_to_index.contains(cat_id)) continue;
 
-            auto dest_mat_index =
-                m_metrics->mapFromSource(main_met.index(m_i, 0));
+        auto const& cat_index = id_to_index[cat_id];
 
-            if (!dest_mat_index.isValid()) {
-                // qDebug() << Q_FUNC_INFO << "Metric" << m_i << "invalid";
-                continue;
-            }
+        auto const& cat_dict = cat_iter.value();
 
-            auto const& this_cell = this_cat[m_i];
+        for (auto met_iter = cat_dict.begin(); met_iter != cat_dict.end();
+             ++met_iter) {
+            auto const& met_id = met_iter.key();
 
-            // qDebug() << m_i << c_i << this_cell.values;
+            if (!id_to_index.contains(met_id)) continue;
 
-            new_cells[index_at(dest_mat_index.row(), dest_cat_index.row())] =
-                Cell(this_cell.values);
+            auto const& met_index = id_to_index[met_id];
+
+            auto const& cell_info = met_iter.value();
+
+            new_cells[index_at(met_index, cat_index)] = Cell(cell_info);
         }
     }
 
@@ -335,9 +338,7 @@ void SimResultModel::ask_run_scenario() {
 
     auto* clist = m_categories->host();
     for (auto const& c : *clist) {
-        state.category_states << CatState {
-            .investment = c.selected ? c.investment : -1,
-        };
+        state.category_states[c.id] = c.selected ? c.investment : -1;
     }
 
     m_archive_model->ask_run_scenario(state,

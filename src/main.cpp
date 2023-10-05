@@ -11,9 +11,6 @@
 #include "scenariomodel.h"
 #include "simresultmodel.h"
 
-#define DOCTEST_CONFIG_IMPLEMENT
-#include "doctest.h"
-
 void on_scenario_changed(ScenarioModel&  scenario_model,
                          MetricModel&    metric_model,
                          CategoryModel&  category_model,
@@ -36,13 +33,6 @@ void on_scenario_changed(ScenarioModel&  scenario_model,
 
 int main(int argc, char* argv[]) {
     qDebug() << "Startup";
-    doctest::Context context;
-
-    context.applyCommandLine(argc, argv);
-
-    int test_res = context.run();
-
-    if (context.shouldExit()) { return test_res; }
 
     QApplication app(argc, argv);
 

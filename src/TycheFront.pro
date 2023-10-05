@@ -1,4 +1,4 @@
-QT += quick charts widgets
+QT += quick widgets
 
 CONFIG += c++20
 
@@ -17,26 +17,21 @@ SOURCES += \
 RESOURCES += \
     res.qrc
 
-QMAKE_CXXFLAGS_RELEASE += DOCTEST_CONFIG_DISABLE
+wasm {
+    # optim for size
+    QMAKE_CXXFLAGS_RELEASE -= -O2
+    QMAKE_CXXFLAGS_RELEASE += -Os
+} else {
+    # only use sanitizers on desktop platforms
+    CONFIG += sanitizer sanitize_address
+}
 
-CONFIG += sanitizer sanitize_address
-
-# Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH =
-
-# Additional import path used to resolve QML modules just for Qt Quick Designer
-QML_DESIGNER_IMPORT_PATH =
-
-# Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    IntroductionScreen.qml \
-    RoundedImage.qml \
-    qml/qmldir \
-    qtquickcontrols2.conf
+    build_wasm.py \
 
 HEADERS += \
     archivemodel.h \

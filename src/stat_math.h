@@ -17,6 +17,13 @@ auto safe_subspan(std::span<T> sp,
     return sp.subspan(offset, count);
 }
 
+struct MedianResult {
+    float            median;
+    std::span<float> lower, upper;
+};
+
+MedianResult compute_median(std::span<float> sorted_data);
+
 struct BoxplotResult {
     QVector<float> structure;
     QVector<float> outliers;
@@ -31,6 +38,3 @@ double compute_std_deviation(QVector<float> data);
 BoxplotResult compute_boxplot(QVector<float> data);
 
 ViolinResult compute_violin(QVector<float> data);
-
-QVector<float> generate_random_testing_data(float center = 1.0,
-                                            float spread = 10.);

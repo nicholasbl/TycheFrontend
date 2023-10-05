@@ -22,7 +22,7 @@ struct MetaMember {
     static constexpr inline auto meta = std::tuple(__VA_ARGS__)
 
 template <class Tuple, class Function>
-auto tuple_for_each(Tuple&& t, Function&& f) {
+constexpr auto tuple_for_each(Tuple&& t, Function&& f) {
     std::apply([&](auto&... x) { (..., f(x)); }, t);
 }
 
@@ -87,7 +87,7 @@ QHash<int, QByteArray> const& get_name_map() {
 }
 
 template <class Record, class ReturnType>
-int role_for_member(ReturnType Record::*ptr) {
+constexpr int role_for_member(ReturnType Record::*ptr) {
     // Need to find a nice way to have a compile error on missing meta
     int ret       = -1;
     using PtrType = decltype(ptr);
@@ -319,6 +319,14 @@ public:
         auto right = index(rowCount() - 1, columnCount() - 1);
 
         emit dataChanged(left, right);
+    }
+
+    template <class Function>
+    void enumerate(Function&& f) {
+        for (auto i = 0; i < rowCount(); i++) {
+            Record const& r = m_records[i];
+            f(r, i);
+        }
     }
 
     auto const& vector() const { return m_records; }

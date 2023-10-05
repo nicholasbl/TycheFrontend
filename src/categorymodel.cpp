@@ -4,11 +4,11 @@
 
 CategoryModel::CategoryModel(QObject* parent) : StructTableModel(parent) { }
 
-QSet<int> CategoryModel::selected_indices() {
-    QSet<int> ret;
+QSet<QString> CategoryModel::selected_indices() {
+    QSet<QString> ret;
 
-    for (int i = 0; i < rowCount(); i++) {
-        if (get_at(i)->selected) ret << i;
+    for (auto const& v : *this) {
+        if (v.selected) ret << v.id;
     }
 
     return ret;
@@ -95,7 +95,7 @@ void SelectedCategoryModel::set_maximum_investment(
 
 void SelectedCategoryModel::recompute_stats() {
     qDebug() << Q_FUNC_INFO;
-    int role = role_for_member(&CategoryRecord::investment);
+    constexpr int role = role_for_member(&CategoryRecord::investment);
 
     qDebug() << Q_FUNC_INFO << "Role is" << role << m_host->roleNames();
 

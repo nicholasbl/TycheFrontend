@@ -14,12 +14,12 @@ public:
 
     void ask_run_scenario(AskRunScenario,
                           ScenarioRecord,
-                          QSet<int> selected_metrics,
-                          QSet<int> selected_categories);
+                          QSet<QString> selected_metrics,
+                          QSet<QString> selected_categories);
     void ask_run_optimize(AskRunOptim,
                           ScenarioRecord,
-                          QSet<int> selected_metrics,
-                          QSet<int> selected_categories);
+                          QSet<QString> selected_metrics,
+                          QSet<QString> selected_categories);
 
 
 public slots:

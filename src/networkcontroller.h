@@ -54,7 +54,7 @@ inline QJsonValue to_json(QString s) {
     return s;
 }
 
-inline QJsonValue to_json(int s) {
+inline QJsonValue to_json(qint64 s) {
     return s;
 }
 
@@ -69,6 +69,15 @@ QJsonValue to_json(QVector<T> list) {
         array << to_json(t);
     }
     return array;
+}
+
+template <class T>
+QJsonValue to_json(QHash<QString, T> obj) {
+    QJsonObject ret;
+    for (auto iter = obj.begin(); iter != obj.end(); ++iter) {
+        ret[iter.key()] = to_json(iter.value());
+    }
+    return ret;
 }
 
 template <class T>
@@ -103,7 +112,7 @@ inline void from_json(QJsonValue v, QString& s) {
     s = v.toString();
 }
 
-inline void from_json(QJsonValue v, int& s) {
+inline void from_json(QJsonValue v, qint64& s) {
     s = v.toInt();
 }
 
@@ -119,5 +128,16 @@ void from_json(QJsonValue v, QVector<T>& list) {
         T new_value;
         from_json(t, new_value);
         list << new_value;
+    }
+}
+
+template <class T>
+void from_json(QJsonValue v, QHash<QString, T>& dest_obj) {
+    dest_obj.clear();
+    QJsonObject source_obj = v.toObject();
+    for (auto iter = source_obj.begin(); iter != source_obj.end(); ++iter) {
+        T new_value;
+        from_json(iter.value(), new_value);
+        dest_obj[iter.key()] = new_value;
     }
 }

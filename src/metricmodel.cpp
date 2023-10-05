@@ -4,11 +4,11 @@
 
 MetricModel::MetricModel(QObject* parent) : StructTableModel(parent) { }
 
-QSet<int> MetricModel::selected_indices() {
-    QSet<int> ret;
+QSet<QString> MetricModel::selected_indices() {
+    QSet<QString> ret;
 
-    for (int i = 0; i < rowCount(); i++) {
-        if (get_at(i)->selected) ret << i;
+    for (auto const& v : *this) {
+        if (v.selected) ret << v.id;
     }
 
     return ret;
@@ -43,6 +43,10 @@ void MetricModel::finalize_choices() {
 
 SelectedMetricModel::SelectedMetricModel(MetricModel* ptr) : m_host(ptr) {
     setSourceModel(ptr);
+}
+
+MetricRecord const* SelectedMetricModel::get_at(int row) const {
+    return m_host->get_at(mapToSource(index(row, 0)).row());
 }
 
 bool SelectedMetricModel::filterAcceptsRow(

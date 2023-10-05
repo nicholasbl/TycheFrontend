@@ -38,11 +38,7 @@ metric : {
 
 scenario_state : {
     scenario_id: uuid
-    category_states: [ category_state ] // 1-1 match with scenario def
-}
-
-category_state : {
-    investment : int
+    category_states: state_dict
 }
 
 //
@@ -51,7 +47,7 @@ scenario_opt : {
     scenario_id: uuid
     portfolio : int
     opt_method: string
-    metric_states: [ metric_state ]
+    metric_states: { metric_uuid : metric_opt }
 }
 
 metric_opt : {
@@ -61,29 +57,23 @@ metric_opt : {
 
 
 //
-
 run_result : {
     scenario_id : uuid,
 
-    category_state : [int, ...]
-    metric_state : [int, ...]
+    category_state : state_dict
+    metric_state : state_dict
 
-    // 2d array, index by [category_i][metric_i]
-    cells: [ [ cell ], ... ]
-    per_metric_summary: [] //?
+    cells: cell_dict
 }
 
-cell : {
-    x: [ float, ... ]
-    // optional box compute?
-    box: box_plot
+state_dict : {
+    uuid: int,
+    ...
 }
 
-box_plot : {
-    min:    float
-    q1:     float
-    median: float
-    q3:     float
-    max:    float
-    outliers: [float, ...]
+cell_dict : {
+    cat_uuid : { metric_uuid : cell, ... }
+    ...
 }
+
+cell : [ float, ... ]

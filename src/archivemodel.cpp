@@ -10,8 +10,8 @@ ArchiveModel::ArchiveModel(QObject* parent) : StructTableModel(parent) { }
 
 void ArchiveModel::ask_run_scenario(AskRunScenario state,
                                     ScenarioRecord scenario,
-                                    QSet<int>      selected_metrics,
-                                    QSet<int>      selected_categories) {
+                                    QSet<QString>  selected_metrics,
+                                    QSet<QString>  selected_categories) {
     qDebug() << Q_FUNC_INFO;
 
     auto this_id = next_counter();
@@ -46,8 +46,8 @@ void ArchiveModel::ask_run_scenario(AskRunScenario state,
 
 void ArchiveModel::ask_run_optimize(AskRunOptim    state,
                                     ScenarioRecord scenario,
-                                    QSet<int>      selected_metrics,
-                                    QSet<int>      selected_categories) {
+                                    QSet<QString>  selected_metrics,
+                                    QSet<QString>  selected_categories) {
     qDebug() << Q_FUNC_INFO;
 
     auto this_id = next_counter();
