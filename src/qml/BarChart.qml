@@ -58,6 +58,8 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             opacity: root_mouse.containsMouse
 
+            font.pointSize: 8
+
             Behavior on opacity {
                 NumberAnimation {
                     duration: 100
@@ -80,6 +82,8 @@ Item {
             anchors.bottom: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
             opacity: root_mouse.containsMouse
+
+            font.pointSize: 8
 
             Behavior on opacity {
                 NumberAnimation {
@@ -107,6 +111,8 @@ Item {
             anchors.right: parent.left
             opacity: root_mouse.containsMouse
 
+            font.pointSize: 8
+
             Behavior on opacity {
                 NumberAnimation {
                     duration: 100
@@ -120,6 +126,8 @@ Item {
             anchors.verticalCenterOffset: implicitHeight
             anchors.left: parent.right
             opacity: root_mouse.containsMouse
+
+            font.pointSize: 8
 
             Behavior on opacity {
                 NumberAnimation {
@@ -143,6 +151,8 @@ Item {
             anchors.bottom: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
             opacity: root_mouse.containsMouse
+
+            font.pointSize: 8
 
             Behavior on opacity {
                 NumberAnimation {

@@ -83,7 +83,10 @@ static MethodResult sanitize_result(QNetworkReply* reply, QString id) {
     auto            document = QJsonDocument::fromJson(bytes, &error);
 
     if (error.error != QJsonParseError::NoError) {
-        qWarning() << "Unable to parse RPC response";
+        qWarning() << "Unable to parse RPC response" << error.errorString();
+
+        qWarning() << "Context:" << bytes.mid(error.offset - 50, 100);
+
         return QString("Failed to parse response");
     }
 

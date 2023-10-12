@@ -123,9 +123,20 @@ TransparentPane {
                             Repeater {
                                 id: bar_repeater
                                 model: selected_category_model
+
+                                property int bar_width: Math.max(distro_bar_chart.width / bar_repeater.count - 5, 1)
+
+
                                 delegate: Rectangle {
-                                    width: distro_bar_chart.width / bar_repeater.count - 5
-                                    height: Math.max(distro_bar_chart.height * investment / selected_category_model.maximum_investment,1)
+                                    width: bar_repeater.bar_width
+                                    height: {
+                                        var total = Math.max(
+                                                selected_category_model.maximum_investment,
+                                                1
+                                            );
+
+                                        Math.max(distro_bar_chart.height * investment / total, 1)
+                                    }
                                     radius: 5
 
                                     color: Util.color_with_alpha(Material.color(Constants.all_colors[index]), .60)

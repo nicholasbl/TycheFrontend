@@ -23,6 +23,7 @@ category : {
     description : string
     starting_investment : int
     max_investment : int
+    id : uuid
 }
 
 metric : {
@@ -31,6 +32,7 @@ metric : {
     starting_opt : int
     opt_slider_min : int
     opt_slider_max : int
+    id : uuid
 }
 
 

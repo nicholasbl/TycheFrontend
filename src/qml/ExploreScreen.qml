@@ -49,11 +49,7 @@ FlowScreen {
                 property bool layout_recompute : {
                     width
                     height
-                    columns
-                    rows
-                    //positionViewAtCell(Qt.point(10,10), TableView.Contain)
-                    //contentX = column_width
-                    //contentY = row_height
+                    forceLayout()
                     console.log("Recomputing layout")
                     return true
                 }
