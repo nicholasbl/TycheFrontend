@@ -32,6 +32,8 @@ struct AskReplyCell {
 struct AskRunResult {
     QString scenario_id;
 
+    QString opt_metric_id;
+
     QHash<QString, qint64> cat_state;
     QHash<QString, qint64> met_state;
 
@@ -40,6 +42,7 @@ struct AskRunResult {
     template <class Archive>
     void archive(Archive& a) {
         a("scenario_id", scenario_id);
+        a("opt_metric_id", opt_metric_id);
         a("category_state", cat_state);
         a("metric_state", met_state);
         a("cells", cells);

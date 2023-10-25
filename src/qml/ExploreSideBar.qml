@@ -43,7 +43,7 @@ TransparentPane {
                 anchors.fill: parent
                 horizontalAlignment: Label.AlignHCenter
                 verticalAlignment: Label.AlignVCenter
-                text: "No sims yet..."
+                text: "No results"
                 opacity: archive_view.count === 0
             }
 
@@ -58,7 +58,7 @@ TransparentPane {
             }
 
             EditLabel {
-                text: "\uf31e"
+                text: "\uf2d0"
                 font: loader.font
 
                 anchors.top: parent.top
@@ -109,10 +109,9 @@ TransparentPane {
                         wrapMode: Label.WrapAtWordBoundaryOrAnywhere
                     }
 
-                    GroupBox {
+                    Frame {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 200
-                        title: "Distribution"
                         Material.roundedScale: Material.SmallScale
                         Row {
                             id: distro_bar_chart
@@ -178,6 +177,24 @@ TransparentPane {
                         Layout.fillHeight: true
                         text: "Select metric optimization goals, then tap optimize to see allocations"
                         wrapMode: Label.WrapAtWordBoundaryOrAnywhere
+                    }
+
+                    ComboBox {
+                        Layout.fillWidth: true
+                        model: selected_metric_model
+                        textRole: "name"
+                        valueRole: "metric_id"
+
+                        currentIndex: indexOfValue()
+
+                        Component.onCompleted: {
+                            currentIndex =
+                                    indexOfValue(sim_result_model.optimize_target_metric_id)
+                        }
+
+                        onActivated: {
+                            sim_result_model.optimize_target_metric_id = currentValue;
+                        }
                     }
 
                     TextField {

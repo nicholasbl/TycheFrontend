@@ -52,6 +52,7 @@ class SimResultModel : public QAbstractTableModel {
     qint64  m_opt_portfolio_amount     = 0;
     qint64  m_max_opt_portfolio_amount = 0;
     QString m_current_scenario_name;
+    QString m_optimize_target_metric_id;
 
 
     Q_PROPERTY(QVector<float> all_cell_stats READ get_all_cell_stats WRITE
@@ -74,6 +75,10 @@ class SimResultModel : public QAbstractTableModel {
     Q_PROPERTY(qint64 max_opt_portfolio_amount READ max_opt_portfolio_amount
                    WRITE set_max_opt_portfolio_amount NOTIFY
                        opt_max_portfolio_amount_changed FINAL)
+
+    Q_PROPERTY(QString optimize_target_metric_id READ optimize_target_metric_id
+                   WRITE set_optimize_target_metric_id NOTIFY
+                       optimize_target_metric_id_changed FINAL)
 
 private:
     Cell cell_at(int metric, int category) const;
@@ -126,6 +131,10 @@ public:
     qint64 max_opt_portfolio_amount() const;
     void   set_max_opt_portfolio_amount(qint64 newMax_opt_portfolio_amount);
 
+    QString optimize_target_metric_id() const;
+    void
+    set_optimize_target_metric_id(const QString& newOptimize_target_metric_id);
+
 private slots:
     void source_models_changed();
     void recompute_cell_stats();
@@ -146,6 +155,7 @@ signals:
     void current_scenario_name_changed();
     void opt_portfolio_amount_changed();
     void opt_max_portfolio_amount_changed();
+    void optimize_target_metric_id_changed();
 };
 
 

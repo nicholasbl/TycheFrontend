@@ -65,7 +65,13 @@ Item {
             margins: 1
 
             ColumnLayout {
+                Label {
+                    Layout.fillWidth: true
+                    text: "Options for <b>" + name + "</b>"
+                }
+
                 RowLayout {
+                    Layout.fillWidth: true
                     Label {
                         text: optim_min
                     }
@@ -84,6 +90,19 @@ Item {
 
                     Label {
                         text: optim_max
+                    }
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Label{
+                        text: "Bound"
+                    }
+                    ComboBox {
+                        model: ["Upper", "Lower"]
+                        currentIndex: bound_type
+                        onActivated: {
+                            bound_type = currentIndex
+                        }
                     }
                 }
             }

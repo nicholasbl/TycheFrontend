@@ -1,6 +1,9 @@
 #include "archivemodel.h"
 #include "networkcontroller.h"
 
+#include <QBuffer>
+#include <QFileDialog>
+
 int ArchiveModel::next_counter() {
     return m_run_counter++;
 }
@@ -99,4 +102,22 @@ void ArchiveModel::delete_run(int index) {
 
 void ArchiveModel::delete_all_runs() {
     this->replace();
+}
+
+
+void ArchiveModel::ask_save_data(int record_id) {
+    auto record_ptr = this->get_at(record_id);
+
+    if (!record_ptr) return;
+
+    QByteArray data_to_disk;
+
+    {
+        QBuffer     buffer(&data_to_disk);
+        QJsonObject doc_obj = to_json(*record_ptr);
+    }
+
+    auto filename = QString("%1.json").arg(record_ptr->archive_name);
+
+    QFileDialog::saveFileContent(data_to_disk, filename);
 }

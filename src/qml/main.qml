@@ -13,7 +13,11 @@ ApplicationWindow {
     FontLoader {
         id: loader
         source: "qrc:/fonts/fa_solid_6.otf"
-        Component.onCompleted: console.log("Loaded:", name)
+        Component.onCompleted: console.log("Loaded:", name, loader.font.family)
+
+        function icon_string(icn) {
+            return "<span style=\"font-family:Font Awesome 6 Free;\">" + icn + "</span>"
+        }
     }
 
     Item {

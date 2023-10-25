@@ -37,12 +37,18 @@ TransparentPane {
         }
 
         Button {
-            text: qsTr("Begin")
+            text: qsTr("Begin ") + loader.icon_string("\uf054")
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            highlighted: true
-            flat: true
+            Material.elevation: 1
             onClicked: {
                 root.onNext()
+            }
+
+            contentItem: Label {
+                text: parent.text
+                textFormat: Label.RichText
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
             }
         }
     }

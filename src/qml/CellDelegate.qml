@@ -19,7 +19,6 @@ Rectangle {
     property int view_index: 0
 
     FadingStack {
-    //StackLayout {
         id: stack_view
         anchors.fill: parent
         anchors.margins: 10

@@ -62,8 +62,21 @@ inline QJsonValue to_json(float s) {
     return s;
 }
 
+inline QJsonValue to_json(QDateTime& d) {
+    return QJsonValue::fromVariant(d);
+}
+
 template <class T>
 QJsonValue to_json(QVector<T> list) {
+    QJsonArray array;
+    for (auto& t : list) {
+        array << to_json(t);
+    }
+    return array;
+}
+
+template <class T>
+QJsonValue to_json(QSet<T> list) {
     QJsonArray array;
     for (auto& t : list) {
         array << to_json(t);

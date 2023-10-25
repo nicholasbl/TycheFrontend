@@ -31,11 +31,19 @@ Page {
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            highlighted: true
-            flat: true
+            anchors.leftMargin: 2
 
-            text: "Back"
+            Material.elevation: 1
+
+            text: loader.icon_string("\uf053") + " Back"
             onClicked: swipeView.currentIndex -= 1
+
+            contentItem: Label {
+                text: parent.text
+                textFormat: Label.RichText
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
         }
 
         Label {
@@ -55,14 +63,22 @@ Page {
         Button {
             id: continue_button
             visible: root.show_footer_continue
-            text: "Continue"
-            highlighted: true
-            flat: true
+            text: "Continue " + loader.icon_string("\uf054")
             onClicked: proceed_to_next()
+
+            Material.elevation: 1
 
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.right: parent.right
+            anchors.rightMargin: 2
+
+            contentItem: Label {
+                text: parent.text
+                textFormat: Label.RichText
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
         }
         layer.enabled: header_bar.Material.elevation > 0
         layer.effect: ElevationEffect {

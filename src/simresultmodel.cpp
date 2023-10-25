@@ -111,13 +111,6 @@ SimResultModel::SimResultModel(SelectedMetricModel*   m,
             &ArchiveModel::data_selected,
             this,
             &SimResultModel::load_data_from);
-
-    // This is now part of the UI
-    //    connect(ar, &ArchiveModel::new_run_ready, this, [this]() {
-    //        auto rc = m_archive_model->rowCount() - 1;
-    //        auto* ptr = m_archive_model->get_at(rc);
-    //        load_data_from(*ptr);
-    //    });
 }
 
 
@@ -370,16 +363,16 @@ void SimResultModel::ask_run_optimize() {
 }
 
 void SimResultModel::ask_save_image(QImage image) {
-#ifdef Q_PROCESSOR_WASM
     QByteArray image_data;
-    QBuffer    buffer(&image_data);
-    image.save(&buffer, "PNG");
-    QFileDialog::saveFileContent("simulation_results.png", image_data);
-#else
-    auto name = QFileDialog::getSaveFileName(nullptr, "Save Image");
 
-    if (!name.isEmpty()) { image.save(name); }
-#endif
+    {
+        QBuffer buffer(&image_data);
+        image.save(&buffer, "PNG");
+    }
+
+    auto filename = QString("%1.png").arg(m_current_scenario_name);
+
+    QFileDialog::saveFileContent(image_data, filename);
 }
 
 // =============================================================================
@@ -437,4 +430,16 @@ void SimResultModel::set_max_opt_portfolio_amount(
     if (m_max_opt_portfolio_amount == newMax_opt_portfolio_amount) return;
     m_max_opt_portfolio_amount = newMax_opt_portfolio_amount;
     emit opt_max_portfolio_amount_changed();
+}
+
+QString SimResultModel::optimize_target_metric_id() const {
+    return m_optimize_target_metric_id;
+}
+
+void SimResultModel::set_optimize_target_metric_id(
+    const QString& newOptimize_target_metric_id) {
+    qDebug() << Q_FUNC_INFO << newOptimize_target_metric_id;
+    if (m_optimize_target_metric_id == newOptimize_target_metric_id) return;
+    m_optimize_target_metric_id = newOptimize_target_metric_id;
+    emit optimize_target_metric_id_changed();
 }

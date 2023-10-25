@@ -29,6 +29,8 @@ public slots:
 
     void delete_all_runs();
 
+    void ask_save_data(int);
+
 signals:
     void data_selected(RunArchive);
 
