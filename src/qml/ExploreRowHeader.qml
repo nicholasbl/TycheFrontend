@@ -73,17 +73,27 @@ Item {
         ColumnLayout {
             anchors.fill: parent
             RowLayout {
-                RoundButton {
-                    flat: true
-                    font: loader.font
-                    text: "\uf2ea"
-                    highlighted: true
+                Label {
+                    Layout.fillWidth: true
+                    text: "Adjust investment"
 
-                    onClicked: {
-                        investment = edit_popup.last_value
-                        invest_slider.value = edit_popup.last_value
-                    }
+                    color: Material.backgroundDimColor
                 }
+                Label {
+                    text: name
+                    font.pointSize: 18
+                }
+            }
+
+            Rectangle {
+                Layout.preferredHeight: 1
+                Layout.fillWidth: true
+                color: Material.dividerColor
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+
 
                 Slider {
                     id: invest_slider
@@ -104,12 +114,24 @@ Item {
             }
 
             RowLayout {
-                Label {
-                    text: name + ":"
-                    font.bold: true
+                Layout.fillWidth: true
+                RoundButton {
+                    flat: true
+                    font: loader.font
+                    text: "\uf2ea"
+                    highlighted: true
+
+                    onClicked: {
+                        investment = edit_popup.last_value
+                        invest_slider.value = edit_popup.last_value
+                    }
                 }
 
-                EditLabel {
+                Item {
+                    Layout.fillWidth: true
+                }
+
+                Label {
                     font.pointSize: 18
                     text: Util.format_money(investment)
                     Layout.alignment: Qt.AlignRight

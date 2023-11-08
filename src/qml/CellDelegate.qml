@@ -30,10 +30,8 @@ Rectangle {
             return view_index + 1
         }
 
-        Label {
-            text: "Awaiting data..."
-
-            horizontalAlignment: Qt.AlignHCenter
+        TransparentRectangle {
+            background_opacity: .50
         }
 
         BarChart {

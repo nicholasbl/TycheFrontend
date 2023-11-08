@@ -65,9 +65,23 @@ Item {
             margins: 1
 
             ColumnLayout {
-                Label {
+                RowLayout {
+                    Label {
+                        Layout.fillWidth: true
+                        text: "Adjust optimization"
+
+                        color: Material.backgroundDimColor
+                    }
+                    Label {
+                        text: name
+                        font.pointSize: 18
+                    }
+                }
+
+                Rectangle {
+                    Layout.preferredHeight: 1
                     Layout.fillWidth: true
-                    text: "Options for <b>" + name + "</b>"
+                    color: Material.dividerColor
                 }
 
                 RowLayout {
@@ -77,6 +91,7 @@ Item {
                     }
 
                     Slider {
+                        id: optim_slider
                         value: optim_value
                         from: optim_min
                         to: optim_max
@@ -98,7 +113,9 @@ Item {
                         text: "Bound"
                     }
                     ComboBox {
-                        model: ["Upper", "Lower"]
+                        id: bound_selection_box
+                        Layout.fillWidth: true
+                        model: ["Below", "Above"]
                         currentIndex: bound_type
                         onActivated: {
                             bound_type = currentIndex

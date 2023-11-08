@@ -1,0 +1,11 @@
+Optimization:
+
+Limit
+"upper or lower" or "min or max"
+Metric on which the user wants to optimize
+max amount
+total amount DEFINITLY
+
+EPS METRIC
+
+permit different solver? probably not
