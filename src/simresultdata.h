@@ -52,11 +52,13 @@ struct AskRunResult {
 // =============================================================================
 
 struct AskRunOptimMetric {
+    QString metric_id;
     float   value;
     QString bound_type;
 
     template <class Archive>
     void archive(Archive& a) {
+        a("metric_id", metric_id);
         a("value", value);
         a("bound_type", bound_type);
     }
@@ -65,14 +67,14 @@ struct AskRunOptimMetric {
 struct AskRunOptim {
     QString                    scenario_id;
     qint64                     portfolio;
-    QString                    opt_method;
+    QString                    metric_target;
     QVector<AskRunOptimMetric> metric_states;
 
     template <class Archive>
     void archive(Archive& a) {
         a("scenario_id", scenario_id);
         a("portfolio", portfolio);
-        a("opt_method", opt_method);
+        a("metric_target", metric_target);
         a("metric_states", metric_states);
     }
 };

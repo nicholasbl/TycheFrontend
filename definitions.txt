@@ -48,11 +48,12 @@ scenario_state : {
 scenario_opt : {
     scenario_id: uuid
     portfolio : int
-    opt_method: string
+    metric_target: metric_uuid
     metric_states: { metric_uuid : metric_opt }
 }
 
 metric_opt : {
+    metric_id: metric_uuid
     value: int
     bound_type: string
 }
@@ -66,6 +67,7 @@ run_result : {
     metric_state : state_dict
 
     cells: cell_dict
+    opt_metric_id: metric_uuid // optional
 }
 
 state_dict : {

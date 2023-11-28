@@ -113,8 +113,8 @@ void ArchiveModel::ask_save_data(int record_id) {
     QByteArray data_to_disk;
 
     {
-        QBuffer     buffer(&data_to_disk);
         QJsonObject doc_obj = to_json(*record_ptr);
+        data_to_disk        = QJsonDocument(doc_obj).toJson();
     }
 
     auto filename = QString("%1.json").arg(record_ptr->archive_name);

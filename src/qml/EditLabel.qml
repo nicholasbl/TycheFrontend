@@ -17,6 +17,7 @@ Label {
 
     MouseArea {
         id: mouse_area
+        enabled: editable
         anchors.fill: parent
         hoverEnabled: true
         onClicked: {

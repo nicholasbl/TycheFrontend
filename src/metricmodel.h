@@ -11,20 +11,15 @@ struct MetricRecord {
     QString image;
     QString id;
 
-    float optim_min = 0;
-    float optim_max = 100;
-
     bool selected = false;
 
-    float optim_value = 60;
+    float  optim_value = 0;
     qint64 bound_type  = 0;
 
     MAKE_META(MetaMember(&MetricRecord::name, "name"),
               MetaMember(&MetricRecord::description, "description"),
               MetaMember(&MetricRecord::image, "image"),
               MetaMember(&MetricRecord::id, "metric_id"),
-              MetaMember(&MetricRecord::optim_min, "optim_min"),
-              MetaMember(&MetricRecord::optim_max, "optim_max"),
               MetaMember(&MetricRecord::selected, "selected", true),
               MetaMember(&MetricRecord::optim_value, "optim_value", true),
               MetaMember(&MetricRecord::bound_type, "bound_type", true));
@@ -35,9 +30,9 @@ struct MetricRecord {
         a("description", description);
         a("image", image);
         a("id", id);
-        a("starting_opt", optim_value);
-        a("opt_slider_min", optim_min);
-        a("opt_slider_max", optim_max);
+        a("selected", selected);
+        a("optim_value", optim_value);
+        a("bound_type", bound_type);
     }
 };
 

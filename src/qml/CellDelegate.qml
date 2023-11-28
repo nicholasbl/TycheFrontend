@@ -18,6 +18,9 @@ Rectangle {
 
     property int view_index: 0
 
+    property real data_min_bound: 0
+    property real data_max_bound: 1
+
     FadingStack {
         id: stack_view
         anchors.fill: parent
@@ -36,8 +39,8 @@ Rectangle {
 
         BarChart {
             id: bar_chart
-            data_global_min: sim_result_model.all_cell_stats[0]
-            data_global_max: sim_result_model.all_cell_stats[1]
+            data_global_min: root.data_min_bound
+            data_global_max: root.data_max_bound
             data_array: box_structure
             line_color: Material.foreground
             fill_color: root.fill_color
@@ -45,8 +48,8 @@ Rectangle {
 
         ViolinChart {
             id: violin_chart
-            data_global_min: sim_result_model.all_cell_stats[0]
-            data_global_max: sim_result_model.all_cell_stats[1]
+            data_global_min: root.data_min_bound
+            data_global_max: root.data_max_bound
             x_array: violin_x
             line_array: violin_y
             line_color: Material.foreground

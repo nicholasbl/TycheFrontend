@@ -15,6 +15,27 @@ TransparentPane {
     ColumnLayout {
         anchors.fill: parent
 
+        RowLayout {
+            Label {
+                text: "History"
+                Layout.fillWidth: true
+            }
+            EditLabel {
+                text: "\uf2d0"
+                font: loader.font
+
+                editable: true
+
+                onClicked: {
+                    archive_explore_pop.open()
+                }
+
+                ArchiveExplorePopup {
+                    id: archive_explore_pop
+                }
+            }
+        }
+
         ListView {
             id: archive_view
             Layout.fillWidth: true
@@ -57,21 +78,6 @@ TransparentPane {
                 })
             }
 
-            EditLabel {
-                text: "\uf2d0"
-                font: loader.font
-
-                anchors.top: parent.top
-                anchors.right: parent.right
-
-                onClicked: {
-                    archive_explore_pop.open()
-                }
-
-                ArchiveExplorePopup {
-                    id: archive_explore_pop
-                }
-            }
         }
 
         TabBar {
@@ -96,21 +102,21 @@ TransparentPane {
             id: edit_stack
 
             Layout.fillWidth: true
+            Layout.fillHeight: true
             currentIndex: mode_bar.currentIndex
 
 
-            Item {
-                ColumnLayout {
+            ColumnLayout {
                     anchors.fill: parent
                     Label {
                         Layout.fillWidth: true
-                        Layout.fillHeight: true
                         text: "Edit investments in technologies, then tap simulate to see the result of these new alloctions"
                         wrapMode: Label.WrapAtWordBoundaryOrAnywhere
                     }
 
                     Frame {
                         Layout.fillWidth: true
+                        Layout.fillHeight: true
                         Layout.preferredHeight: 200
                         Material.roundedScale: Material.SmallScale
                         Row {
@@ -166,10 +172,8 @@ TransparentPane {
                         onClicked: sim_result_model.ask_run_scenario()
                     }
                 }
-            }
 
-            Item {
-                ColumnLayout {
+            ColumnLayout {
                     anchors.fill: parent
 
                     Label {
@@ -177,6 +181,7 @@ TransparentPane {
                         Layout.fillHeight: true
                         text: "Select metric optimization goals, then tap optimize to see allocations"
                         wrapMode: Label.WrapAtWordBoundaryOrAnywhere
+                        elide: Label.ElideRight
                     }
 
                     ComboBox {
@@ -233,10 +238,8 @@ TransparentPane {
                         onClicked: sim_result_model.ask_run_optimize()
                     }
                 }
-            }
 
-            Item {
-                GridLayout {
+            GridLayout {
                     columns: 2
                     anchors.fill: parent
 
@@ -271,7 +274,7 @@ TransparentPane {
                         Layout.fillHeight: true
                     }
                 }
-            }
+
         }
     }
 }

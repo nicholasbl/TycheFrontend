@@ -53,8 +53,8 @@ FlowScreen {
 
                         metric_selected: model.selected
 
-                        onMetric_selectedChanged: {
-                            model.selected = metric_selected
+                        onSelection_changed: function(state){
+                            model.selected = state
                         }
                     }
 
@@ -101,8 +101,8 @@ FlowScreen {
 
                         metric_selected: model.selected
 
-                        onMetric_selectedChanged: {
-                            model.selected = metric_selected
+                        onSelection_changed: function(state){
+                            model.selected = state
                         }
                     }
 

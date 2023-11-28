@@ -62,6 +62,17 @@ FlowScreen {
             anchors.centerIn: parent
             running: main_grid.count === 0
         }
+
+        RoundButton {
+            text: "\uf2f1"
+            font: loader.font
+            onClicked: scenario_model.refresh_scenario_list();
+
+            flat: true
+
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+        }
     }
 
     Dialog {

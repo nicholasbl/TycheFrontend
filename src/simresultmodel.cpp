@@ -56,13 +56,53 @@ void SimResultModel::replace_cells(QVector<Cell> new_cells) {
 
     QVector<Cell> summary_cells;
 
+    QVector<float> metric_min_stats(m_metrics->rowCount(),
+                                    std::numeric_limits<float>::max());
+    QVector<float> metric_max_stats(m_metrics->rowCount(),
+                                    std::numeric_limits<float>::lowest());
+    bool           stats_changed = false;
+
     for (auto m_i = 0; m_i < m_metrics->rowCount(); m_i++) {
         QVector<float> total;
         for (auto c_i = 0; c_i < m_categories->rowCount(); c_i++) {
             total << cell_at(m_i, c_i).raw_data;
         }
-        summary_cells << Cell(total);
+        auto new_cell = Cell(total);
+
+        if (new_cell.raw_data.size()) {
+            stats_changed                 = true;
+            auto [metric_min, metric_max] = std::minmax_element(
+                new_cell.raw_data.begin(), new_cell.raw_data.end());
+
+            metric_min_stats[m_i] =
+                std::min(metric_min_stats[m_i], *metric_min);
+            metric_max_stats[m_i] =
+                std::max(metric_max_stats[m_i], *metric_max);
+        }
+
+        summary_cells << new_cell;
     }
+
+    QVector<float> complete_metric_stats;
+    complete_metric_stats.reserve(metric_max_stats.size() +
+                                  metric_min_stats.size());
+
+    if (stats_changed) {
+        for (auto i = 0; i < metric_min_stats.size(); i++) {
+            complete_metric_stats << metric_min_stats[i];
+            complete_metric_stats << metric_max_stats[i];
+        }
+    } else {
+        for (auto i = 0; i < metric_min_stats.size(); i++) {
+            complete_metric_stats << 0;
+            complete_metric_stats << 1;
+        }
+    }
+
+    qDebug() << "METRIC STATS" << complete_metric_stats;
+
+    set_metric_summary(complete_metric_stats);
+
 
     m_sim_sum_model->replace(summary_cells);
 
@@ -236,6 +276,11 @@ void SimResultModel::set_current_scenario(ScenarioRecord record) {
     // now set up ancillary parts
     m_metrics->host()->replace(record.metrics);
     m_categories->host()->replace(record.categories);
+
+    // set up some other UI
+    if (auto ptr = m_metrics->get_at(0); ptr) {
+        set_optimize_target_metric_id(ptr->id);
+    }
 }
 
 void SimResultModel::load_data_from(RunArchive const& archive) {
@@ -256,6 +301,10 @@ void SimResultModel::load_data_from(RunArchive const& archive) {
     }
 
     auto const& result = archive.run_result;
+
+    if (!result.opt_metric_id.isEmpty()) {
+        set_optimize_target_metric_id(result.opt_metric_id);
+    }
 
     // resize
     QVector<Cell> new_cells(m_metrics->rowCount() * m_categories->rowCount());
@@ -346,13 +395,27 @@ void SimResultModel::ask_run_optimize() {
 
     state.scenario_id = m_current_scenario.uuid;
     state.portfolio   = opt_portfolio_amount();
-    state.opt_method  = "none";
+    state.metric_target = m_optimize_target_metric_id;
 
     auto* metric_list = m_metrics->host();
 
     for (auto const& m : *metric_list) {
+
+        if (m.id == m_optimize_target_metric_id) { continue; }
+
+        QString bound_type;
+        if (m.bound_type == 0) {
+            // SYNC THIS IN ExploreColumnHeader!
+            // 0 is 'Above' which is an 'lower' bound
+            bound_type = QStringLiteral("lower");
+        } else {
+            bound_type = QStringLiteral("upper");
+        }
+
         state.metric_states << AskRunOptimMetric {
-            .value = m.optim_value,
+            .metric_id  = m.id,
+            .value      = m.optim_value,
+            .bound_type = bound_type,
         };
     }
 
@@ -442,4 +505,15 @@ void SimResultModel::set_optimize_target_metric_id(
     if (m_optimize_target_metric_id == newOptimize_target_metric_id) return;
     m_optimize_target_metric_id = newOptimize_target_metric_id;
     emit optimize_target_metric_id_changed();
+}
+
+QVector<float> SimResultModel::metric_summary() const {
+    return m_metric_summary;
+}
+
+void SimResultModel::set_metric_summary(
+    const QVector<float>& newMetric_summary) {
+    if (m_metric_summary == newMetric_summary) return;
+    m_metric_summary = newMetric_summary;
+    emit metric_summary_changed();
 }

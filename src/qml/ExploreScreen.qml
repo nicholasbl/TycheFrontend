@@ -60,6 +60,9 @@ FlowScreen {
                     implicitWidth: grid_view.column_width
                     view_index: side_bar.view_type
                     fill_color: Util.color_with_alpha(Material.color(Constants.all_colors[column]), .60)
+
+                    data_min_bound: sim_result_model.metric_summary[column*2]
+                    data_max_bound: sim_result_model.metric_summary[column*2 + 1]
                 }
 
                 Row {
@@ -143,6 +146,12 @@ FlowScreen {
                                 view_index: side_bar.view_type
                                 fill_color: Util.color_with_alpha(Material.color(Constants.all_colors[index]), .60)
                                 border.width: 0
+
+                                data_min_bound: sim_result_model.metric_summary[index*2]
+                                data_max_bound: sim_result_model.metric_summary[index*2 + 1]
+
+                                //data_min_bound: sim_result_model.all_cell_stats[0]
+                                //data_max_bound: sim_result_model.all_cell_stats[1]
 
                                 Rectangle {
                                     width: 1

@@ -29,9 +29,12 @@ TransparentRectangle {
 
         Label {
             Layout.fillWidth: true
+            Layout.fillHeight: true
             text: name
             wrapMode: Label.WrapAtWordBoundaryOrAnywhere
             font.bold: true
+            elide: Label.ElideRight
+            font.pointSize: large_view ? 12 : 10
         }
 
         Rectangle {

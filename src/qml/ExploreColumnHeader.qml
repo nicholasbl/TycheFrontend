@@ -65,6 +65,7 @@ Item {
             margins: 1
 
             ColumnLayout {
+                spacing: 5
                 RowLayout {
                     Label {
                         Layout.fillWidth: true
@@ -84,27 +85,13 @@ Item {
                     color: Material.dividerColor
                 }
 
-                RowLayout {
+                TextField {
                     Layout.fillWidth: true
-                    Label {
-                        text: optim_min
-                    }
-
-                    Slider {
-                        id: optim_slider
-                        value: optim_value
-                        from: optim_min
-                        to: optim_max
-
-                        stepSize: 1
-
-                        onMoved: {
-                            optim_value = value
-                        }
-                    }
-
-                    Label {
-                        text: optim_max
+                    Layout.topMargin: 4
+                    placeholderText: "Optimization value"
+                    text: optim_value
+                    onEditingFinished: {
+                        optim_value = text
                     }
                 }
                 RowLayout {
@@ -115,7 +102,8 @@ Item {
                     ComboBox {
                         id: bound_selection_box
                         Layout.fillWidth: true
-                        model: ["Below", "Above"]
+                        // Sync this in sim result model!
+                        model: ["Above", "Below"]
                         currentIndex: bound_type
                         onActivated: {
                             bound_type = currentIndex

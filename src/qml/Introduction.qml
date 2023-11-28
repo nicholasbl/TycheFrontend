@@ -21,19 +21,37 @@ TransparentPane {
         }
 
         Label {
-            id: tyche_intro_name
-            y: 200
             text: qsTr("Tyche")
             font.pointSize: 32
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
         }
 
         Label {
+            text: qsTr("<i>T</i>echnolog<i>y</i> <i>Ch</i>aracterization and <i>E</i>valuation")
+            font.pointSize: 26
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+        }
+
+        Rectangle {
+            Layout.preferredHeight: 1
+            Layout.preferredWidth: 150
+            color: Material.dividerColor
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+        }
+
+        Label {
             id: tyche_explain_label
-            text: qsTr("This is some basic text to let people know what this tool is about, what it can do for them, basic knowledge required, etc.")
-            horizontalAlignment: Text.AlignHCenter
+            text: qsTr("The Tyche tool provides a consistent and systematic methodology for evaluating alternative R&D investments in a technology or technology system and for comparing the impacts of these investments on metrics and outcomes of interest. Tyche is intended to provide analytical support for funding decision-makers as they consider how to meet their overall goals with various R&D investment strategies.")
+            horizontalAlignment: Text.AlignJustify
             wrapMode: Text.WordWrap
             Layout.fillWidth: true
+        }
+
+        Rectangle {
+            Layout.preferredHeight: 1
+            Layout.preferredWidth: 150
+            color: Material.dividerColor
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
         }
 
         Button {

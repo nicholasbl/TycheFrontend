@@ -12,37 +12,47 @@ Dialog {
 
     ColumnLayout {
         spacing: 5
-        GroupBox {
+
+        Rectangle {
+            Layout.preferredHeight: 1
+            Layout.fillWidth: true
+            color: Material.dividerColor
+        }
+
+        Label {
+            Layout.fillWidth: true
+            text: "Tap below to save an image of the plot area as a PNG image"
+        }
+
+        Button {
             Layout.fillWidth: true
 
-            title: "Screenshot"
-            ColumnLayout {
-                anchors.fill: parent
-                Button {
-                    text: "Save Image"
-                    onClicked: {
-                        let start_result = explore_root_view.grabToImage(function(result){
-                            sim_result_model.ask_save_image(result.image)
-                        })
+            text: "Save Image"
+            onClicked: {
+                let start_result = explore_root_view.grabToImage(function(result){
+                    sim_result_model.ask_save_image(result.image)
+                })
 
-                        console.log("Start image save result", start_result)
-                    }
-                }
+                console.log("Start image save result", start_result)
             }
         }
 
-        GroupBox {
+        Rectangle {
+            Layout.preferredHeight: 1
             Layout.fillWidth: true
+            color: Material.dividerColor
+        }
 
-            title: "Data"
-            ColumnLayout {
-                anchors.fill: parent
-                Button {
-                    text: "Save Data as..."
-                    onClicked: {
-                        archive_model.ask_save_data(archive_view.currentIndex);
-                    }
-                }
+        Label {
+            Layout.fillWidth: true
+            text: "Tap below to save the current dataset as a JSON document"
+        }
+
+        Button {
+            Layout.fillWidth: true
+            text: "Save Data as..."
+            onClicked: {
+                archive_model.ask_save_data(archive_view.currentIndex);
             }
         }
     }

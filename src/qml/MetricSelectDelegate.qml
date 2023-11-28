@@ -10,6 +10,8 @@ TransparentRectangle {
     property string metric_image
     property bool metric_selected
 
+    signal selection_changed(bool state);
+
     background_opacity: 0
 
     RoundedImage {
@@ -62,9 +64,7 @@ TransparentRectangle {
         anchors.bottom: parent.bottom
         checked: metric_selected
 
-        onClicked: {
-            metric_selected = checked
-        }
+        onClicked: selection_changed(checked)
     }
     states: [
         State {

@@ -50,6 +50,10 @@ QJsonObject to_json(T& t) {
     return obj.value;
 }
 
+inline QJsonValue to_json(bool b) {
+    return b;
+}
+
 inline QJsonValue to_json(QString s) {
     return s;
 }
@@ -120,6 +124,9 @@ void from_json(QJsonValue v, T& t) {
     t.archive(obj);
 }
 
+inline void from_json(QJsonValue v, bool& b) {
+    b = v.toBool();
+}
 
 inline void from_json(QJsonValue v, QString& s) {
     s = v.toString();

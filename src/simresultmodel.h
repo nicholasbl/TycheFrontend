@@ -46,6 +46,7 @@ class SimResultModel : public QAbstractTableModel {
     QVector<Cell> m_cells;
 
     QVector<float> m_all_cell_stats;
+    QVector<float> m_metric_summary; // lookup by 2*mindex
 
     bool    m_edited                   = false;
     qint64  m_total_value              = 0;
@@ -79,6 +80,9 @@ class SimResultModel : public QAbstractTableModel {
     Q_PROPERTY(QString optimize_target_metric_id READ optimize_target_metric_id
                    WRITE set_optimize_target_metric_id NOTIFY
                        optimize_target_metric_id_changed FINAL)
+
+    Q_PROPERTY(QVector<float> metric_summary READ metric_summary WRITE
+                   set_metric_summary NOTIFY metric_summary_changed FINAL)
 
 private:
     Cell cell_at(int metric, int category) const;
@@ -135,6 +139,9 @@ public:
     void
     set_optimize_target_metric_id(const QString& newOptimize_target_metric_id);
 
+    QVector<float> metric_summary() const;
+    void           set_metric_summary(const QVector<float>& newMetric_summary);
+
 private slots:
     void source_models_changed();
     void recompute_cell_stats();
@@ -156,6 +163,7 @@ signals:
     void opt_portfolio_amount_changed();
     void opt_max_portfolio_amount_changed();
     void optimize_target_metric_id_changed();
+    void metric_summary_changed();
 };
 
 
