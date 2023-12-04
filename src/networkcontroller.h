@@ -133,7 +133,11 @@ inline void from_json(QJsonValue v, QString& s) {
 }
 
 inline void from_json(QJsonValue v, qint64& s) {
-    s = v.toInt();
+    if (v.isDouble()) {
+        s = v.toDouble();
+    } else {
+        s = v.toInt();
+    }
 }
 
 inline void from_json(QJsonValue v, float& s) {
