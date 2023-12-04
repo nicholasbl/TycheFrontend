@@ -4,8 +4,8 @@ import QtQuick.Controls 6.5
 import QtQuick.Controls.Material
 
 ApplicationWindow {
-    width: 960
-    height: 540
+    width: 1152
+    height: 648
 
     visible: true
     title: "Tyche Frontend"

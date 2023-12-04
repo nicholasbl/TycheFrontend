@@ -54,6 +54,7 @@ class SimResultModel : public QAbstractTableModel {
     qint64  m_max_opt_portfolio_amount = 0;
     QString m_current_scenario_name;
     QString m_optimize_target_metric_id;
+    QString m_optimize_target_sense = "max";
 
 
     Q_PROPERTY(QVector<float> all_cell_stats READ get_all_cell_stats WRITE
@@ -84,11 +85,16 @@ class SimResultModel : public QAbstractTableModel {
     Q_PROPERTY(QVector<float> metric_summary READ metric_summary WRITE
                    set_metric_summary NOTIFY metric_summary_changed FINAL)
 
+    Q_PROPERTY(
+        QString optimize_target_sense READ optimize_target_sense WRITE
+            setOptimize_target_sense NOTIFY optimize_target_senseChanged FINAL)
+
 private:
     Cell cell_at(int metric, int category) const;
     int  index_at(int metric, int category) const;
 
     void replace_cells(QVector<Cell> new_cells);
+
 
 public:
     enum PortfolioRoles {
@@ -119,14 +125,14 @@ public:
     bool edited() const;
     void setEdited(bool newEdited);
 
+    void clear();
+
     qint64 total_value() const;
     void   set_total_value(qint64 newTotal_value);
 
     void    set_current_scenario(ScenarioRecord);
     QString current_scenario_name() const;
     void    set_current_scenario_name(const QString& newCurrent_scenario_name);
-
-    void clear();
 
 
     qint64 opt_portfolio_amount() const;
@@ -141,6 +147,9 @@ public:
 
     QVector<float> metric_summary() const;
     void           set_metric_summary(const QVector<float>& newMetric_summary);
+
+    QString optimize_target_sense() const;
+    void    setOptimize_target_sense(const QString& newOptimize_target_sense);
 
 private slots:
     void source_models_changed();
@@ -164,6 +173,7 @@ signals:
     void opt_max_portfolio_amount_changed();
     void optimize_target_metric_id_changed();
     void metric_summary_changed();
+    void optimize_target_senseChanged();
 };
 
 

@@ -396,6 +396,7 @@ void SimResultModel::ask_run_optimize() {
     state.scenario_id = m_current_scenario.uuid;
     state.portfolio   = opt_portfolio_amount();
     state.metric_target = m_optimize_target_metric_id;
+    state.optim_sense   = m_optimize_target_sense;
 
     auto* metric_list = m_metrics->host();
 
@@ -516,4 +517,14 @@ void SimResultModel::set_metric_summary(
     if (m_metric_summary == newMetric_summary) return;
     m_metric_summary = newMetric_summary;
     emit metric_summary_changed();
+}
+QString SimResultModel::optimize_target_sense() const {
+    return m_optimize_target_sense;
+}
+
+void SimResultModel::setOptimize_target_sense(
+    const QString& newOptimize_target_sense) {
+    if (m_optimize_target_sense == newOptimize_target_sense) return;
+    m_optimize_target_sense = newOptimize_target_sense;
+    emit optimize_target_senseChanged();
 }

@@ -176,7 +176,7 @@ FlowScreen {
             id: side_bar
             Layout.fillHeight: true
             Layout.margins: 10
-            Layout.preferredWidth: 200
+            Layout.preferredWidth: 250
         }
 
     }

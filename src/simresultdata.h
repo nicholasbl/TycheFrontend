@@ -33,6 +33,7 @@ struct AskRunResult {
     QString scenario_id;
 
     QString opt_metric_id;
+    QString opt_sense;
 
     QHash<QString, qint64> cat_state;
     QHash<QString, qint64> met_state;
@@ -43,6 +44,7 @@ struct AskRunResult {
     void archive(Archive& a) {
         a("scenario_id", scenario_id);
         a("opt_metric_id", opt_metric_id);
+        a("opt_sense", opt_sense);
         a("category_state", cat_state);
         a("metric_state", met_state);
         a("cells", cells);
@@ -68,6 +70,7 @@ struct AskRunOptim {
     QString                    scenario_id;
     qint64                     portfolio;
     QString                    metric_target;
+    QString                    optim_sense;
     QVector<AskRunOptimMetric> metric_states;
 
     template <class Archive>
@@ -75,6 +78,7 @@ struct AskRunOptim {
         a("scenario_id", scenario_id);
         a("portfolio", portfolio);
         a("metric_target", metric_target);
+        a("optimize_sense", optim_sense);
         a("metric_states", metric_states);
     }
 };

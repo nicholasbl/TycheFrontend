@@ -190,16 +190,48 @@ TransparentPane {
                         textRole: "name"
                         valueRole: "metric_id"
 
-                        currentIndex: indexOfValue()
-
                         Component.onCompleted: {
-                            currentIndex =
-                                    indexOfValue(sim_result_model.optimize_target_metric_id)
+                            if (count === 0) {
+                                currentIndex = -1
+                                return
+                            }
+
+                            var idx = indexOfValue(sim_result_model.optimize_target_metric_id)
+
+                            if (idx < 0) id = 0
+
+                            currentIndex = idx
                         }
 
                         onActivated: {
                             sim_result_model.optimize_target_metric_id = currentValue;
                         }
+                    }
+
+                    ComboBox {
+                        Layout.fillWidth: true
+                        textRole: "text"
+                        valueRole: "value"
+                        model: [
+                            { value: "min", text: "Minimum"},
+                            { value: "max", text: "Maximum"}
+                        ]
+
+                        onActivated: sim_result_model.optimize_target_sense = currentValue
+
+                        Component.onCompleted: {
+                            if (count === 0) {
+                                currentIndex = -1
+                                return
+                            }
+
+                            var idx = indexOfValue(sim_result_model.optimize_target_sense)
+
+                            if (idx < 0) id = 0
+
+                            currentIndex = idx
+                        }
+
                     }
 
                     TextField {
