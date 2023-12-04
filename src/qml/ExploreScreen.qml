@@ -122,6 +122,7 @@ FlowScreen {
                             Label {
                                 text: "Total Portfolio"
                                 font.bold: true
+                                font.pointSize: 14
                             }
 
                             EditLabel {

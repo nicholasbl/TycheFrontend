@@ -141,7 +141,11 @@ inline void from_json(QJsonValue v, qint64& s) {
 }
 
 inline void from_json(QJsonValue v, float& s) {
-    s = v.toDouble();
+    if (v.isDouble()) {
+        s = v.toDouble();
+    } else {
+        s = v.toInteger();
+    }
 }
 
 template <class T>

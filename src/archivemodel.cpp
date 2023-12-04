@@ -51,7 +51,7 @@ void ArchiveModel::ask_run_optimize(AskRunOptim    state,
                                     ScenarioRecord scenario,
                                     QSet<QString>  selected_metrics,
                                     QSet<QString>  selected_categories) {
-    qDebug() << Q_FUNC_INFO;
+    // qDebug() << Q_FUNC_INFO;
 
     auto this_id = next_counter();
 
@@ -64,6 +64,7 @@ void ArchiveModel::ask_run_optimize(AskRunOptim    state,
             &ArchiveModel::error_from_sim);
 
     connect(method, &JSONRpcMethod::request_success, this, [=](QJsonValue doc) {
+        // qDebug() << doc;
         AskRunResult new_sim_data;
         from_json(doc, new_sim_data);
         auto new_run = RunArchive {

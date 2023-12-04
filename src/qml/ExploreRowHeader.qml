@@ -43,6 +43,7 @@ Item {
             id: column_name
             text: name
             font.bold: true
+            font.pointSize: 14
             Layout.fillWidth: true
         }
 

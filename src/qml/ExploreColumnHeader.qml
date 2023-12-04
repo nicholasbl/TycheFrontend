@@ -48,6 +48,7 @@ Item {
                 text: name
 
                 font.bold: true
+                font.pointSize: 14
 
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
 
@@ -66,10 +67,11 @@ Item {
 
             ColumnLayout {
                 spacing: 5
+
                 RowLayout {
                     Label {
                         Layout.fillWidth: true
-                        text: "Adjust optimization"
+                        text: "Optimization options for"
 
                         color: Material.backgroundDimColor
                     }
@@ -79,34 +81,66 @@ Item {
                     }
                 }
 
-                Rectangle {
-                    Layout.preferredHeight: 1
-                    Layout.fillWidth: true
-                    color: Material.dividerColor
+                CheckBox {
+                    id: limit_check
+                    text: "Set limits"
+
+                    checked: bound_type === "lower" || bound_type === "upper"
+
+                    onClicked: {
+                        if (!checked) {
+                            bound_type = ""
+                        } else {
+                            bound_type = "lower"
+                        }
+                    }
                 }
 
-                TextField {
-                    Layout.fillWidth: true
-                    Layout.topMargin: 4
-                    placeholderText: "Optimization value"
-                    text: optim_value
-                    onEditingFinished: {
-                        optim_value = text
-                    }
-                }
-                RowLayout {
-                    Layout.fillWidth: true
-                    Label{
-                        text: "Bound"
-                    }
-                    ComboBox {
-                        id: bound_selection_box
+                ColumnLayout {
+                    id: extra_opts
+                    enabled: limit_check.checked
+
+
+                    Rectangle {
+                        Layout.preferredHeight: 1
                         Layout.fillWidth: true
-                        // Sync this in sim result model!
-                        model: ["Above", "Below"]
-                        currentIndex: bound_type
-                        onActivated: {
-                            bound_type = currentIndex
+                        color: Material.dividerColor
+                    }
+
+                    SpinBox {
+                        Layout.fillWidth: true
+
+                        editable: true
+
+                        from: -1000
+                        to: 1000
+
+                        value: optim_value
+                        onValueModified: {
+                            optim_value = value
+                        }
+                    }
+                    RowLayout {
+                        Layout.fillWidth: true
+
+                        ComboBox {
+                            id: bound_selection_box
+                            textRole: "text"
+                            valueRole: "value"
+                            Layout.fillWidth: true
+                            // Sync this in sim result model!
+                            model: [
+                                {value: "lower", text: "Lower"},
+                                {value: "upper", text: "Upper"},
+                            ]
+                            currentIndex: indexOfValue(bound_type)
+                            onActivated: function(index){
+                                bound_type = model[index].value
+                            }
+                        }
+
+                        Label{
+                            text: "bound"
                         }
                     }
                 }

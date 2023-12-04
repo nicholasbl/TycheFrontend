@@ -315,12 +315,27 @@ void SimResultModel::load_data_from(RunArchive const& archive) {
     }
 
     auto& main_cat = *m_categories->host();
-    // auto& main_met = *m_metrics->host();
+    auto& main_met = *m_metrics->host();
 
     main_cat.update_all([&](CategoryRecord& r, int) {
         r.investment = result.cat_state.value(r.id);
     });
 
+    main_met.update_all([&](MetricRecord& r, int) {
+        r.bound_type  = "";
+        r.optim_value = 0;
+
+        auto iter = result.met_state.find(r.id);
+
+        if (iter != result.met_state.end()) {
+            qDebug() << "CAN UPDATE METRIC" << iter.value().sense
+                     << iter.value().limit;
+            r.bound_type  = iter.value().sense;
+            r.optim_value = iter.value().limit;
+        }
+    });
+
+    setOptimize_target_sense(result.opt_sense);
 
     // TODO: replace with two models; one for data, second for a filtered table.
 
@@ -402,21 +417,13 @@ void SimResultModel::ask_run_optimize() {
 
     for (auto const& m : *metric_list) {
 
-        if (m.id == m_optimize_target_metric_id) { continue; }
-
-        QString bound_type;
-        if (m.bound_type == 0) {
-            // SYNC THIS IN ExploreColumnHeader!
-            // 0 is 'Above' which is an 'lower' bound
-            bound_type = QStringLiteral("lower");
-        } else {
-            bound_type = QStringLiteral("upper");
-        }
+        // if (m.id == m_optimize_target_metric_id) { continue; }
+        if (m.bound_type.isEmpty()) { continue; }
 
         state.metric_states << AskRunOptimMetric {
             .metric_id  = m.id,
             .value      = m.optim_value,
-            .bound_type = bound_type,
+            .bound_type = m.bound_type,
         };
     }
 

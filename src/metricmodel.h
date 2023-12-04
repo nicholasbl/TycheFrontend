@@ -13,8 +13,8 @@ struct MetricRecord {
 
     bool selected = false;
 
-    float  optim_value = 0;
-    qint64 bound_type  = 0;
+    float   optim_value = 0;
+    QString bound_type;
 
     MAKE_META(MetaMember(&MetricRecord::name, "name"),
               MetaMember(&MetricRecord::description, "description"),

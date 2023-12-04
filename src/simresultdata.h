@@ -20,12 +20,14 @@ struct AskRunScenario {
 
 // =============================================================================
 
-struct AskReplyCell {
-    QVector<float> values;
+struct AskReplyMetric {
+    QString sense;
+    float   limit = 0;
 
     template <class Archive>
     void archive(Archive& a) {
-        a("x", values);
+        a("limit", limit);
+        a("sense", sense);
     }
 };
 
@@ -36,7 +38,7 @@ struct AskRunResult {
     QString opt_sense;
 
     QHash<QString, qint64> cat_state;
-    QHash<QString, qint64> met_state;
+    QHash<QString, AskReplyMetric> met_state;
 
     QHash<QString, QHash<QString, QVector<float>>> cells;
 
