@@ -61,6 +61,28 @@ Item {
             }
         }
 
+        Label {
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.margins: 10
+            text: "\uf05a"
+            font: loader.font
+            color: Material.backgroundDimColor
+
+            MouseArea {
+                id: info_label
+                anchors.fill: parent
+
+                hoverEnabled: true
+            }
+
+            ToolTip {
+                visible: info_label.containsMouse || info_label.containsPress
+                text: description
+                timeout: 5000
+            }
+        }
+
         Popup {
             id: edit_opts
             margins: 1
