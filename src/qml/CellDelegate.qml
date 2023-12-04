@@ -54,6 +54,18 @@ Rectangle {
             line_array: violin_y
             line_color: Material.foreground
             fill_color: root.fill_color
+
+            BarChart {
+                anchors.fill: parent
+                data_global_min: root.data_min_bound
+                data_global_max: root.data_max_bound
+                data_array: box_structure
+                line_color: Material.background
+                //fill_color: root.fill_color
+                fill_color: Material.foreground
+                height_scale: .25
+                opacity: .75
+            }
         }
 
     }

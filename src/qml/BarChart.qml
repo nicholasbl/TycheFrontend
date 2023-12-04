@@ -43,11 +43,9 @@ Item {
         return delta > 30
     }
 
-//    property int format_fixed_points : {
+    property real height_scale: .9
 
-//    }
-
-    property real line_heights: height * .9
+    property real line_heights: height * height_scale
 
     property real line_opacity: .75
 
