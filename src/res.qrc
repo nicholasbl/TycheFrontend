@@ -45,5 +45,6 @@
         <file>qml/ExportPopup.qml</file>
         <file>qml/ArchiveDelegate.qml</file>
         <file>qml/ArchiveExplorePopup.qml</file>
+        <file>qml/PortfolioOptPop.qml</file>
     </qresource>
 </RCC>

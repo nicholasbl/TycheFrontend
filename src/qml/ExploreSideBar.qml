@@ -105,9 +105,7 @@ TransparentPane {
             Layout.fillHeight: true
             currentIndex: mode_bar.currentIndex
 
-
             ColumnLayout {
-                    anchors.fill: parent
                     Label {
                         Layout.fillWidth: true
                         text: "Edit investments in technologies, then tap simulate to see the result of these new alloctions"
@@ -174,7 +172,6 @@ TransparentPane {
                 }
 
             ColumnLayout {
-                    anchors.fill: parent
 
                     Label {
                         Layout.fillWidth: true
@@ -208,57 +205,6 @@ TransparentPane {
                         }
                     }
 
-                    ComboBox {
-                        Layout.fillWidth: true
-                        textRole: "text"
-                        valueRole: "value"
-                        model: [
-                            { value: "min", text: "Minimum"},
-                            { value: "max", text: "Maximum"}
-                        ]
-
-                        onActivated: sim_result_model.optimize_target_sense = currentValue
-
-                        Component.onCompleted: {
-                            if (count === 0) {
-                                currentIndex = -1
-                                return
-                            }
-
-                            var idx = indexOfValue(sim_result_model.optimize_target_sense)
-
-                            if (idx < 0) id = 0
-
-                            currentIndex = idx
-                        }
-
-                    }
-
-                    TextField {
-                        Layout.fillWidth: true
-                        placeholderText: "Portfolio limit"
-                        text: Util.format_money(sim_result_model.opt_portfolio_amount)
-
-                        validator: IntValidator {
-                            bottom: 0
-                            top: sim_result_model.max_opt_portfolio_amount
-                        }
-
-                        onAccepted:  {
-                            sim_result_model.opt_portfolio_amount = parseInt(text)
-                        }
-                    }
-
-                    Slider {
-                        Layout.fillWidth: true
-                        from: 0
-                        to: sim_result_model.max_opt_portfolio_amount
-
-                        onMoved: {
-                            sim_result_model.opt_portfolio_amount = value
-                        }
-                    }
-
                     Rectangle {
                         Layout.preferredHeight: 2
                         Layout.fillWidth: true
@@ -273,7 +219,6 @@ TransparentPane {
 
             GridLayout {
                     columns: 2
-                    anchors.fill: parent
 
                     Label {
                         text: "Display"

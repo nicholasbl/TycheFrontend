@@ -124,10 +124,19 @@ FlowScreen {
                                 font.bold: true
                             }
 
-                            Label {
+                            EditLabel {
                                 font.pointSize: 18
                                 text: Util.format_money(sim_result_model.total_value)
                                 Layout.alignment: Qt.AlignRight
+
+                                editable: in_optim_mode
+
+                                PortfolioOptPop {
+                                    id: port_opt_pop
+                                    margins: 1
+                                }
+
+                                onClicked: port_opt_pop.open()
                             }
                         }
                     }
