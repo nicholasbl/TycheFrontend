@@ -3,6 +3,8 @@ import QtQuick.Controls 2.15
 import QtQuick.Shapes
 import QtQuick.Controls.Material
 
+import "./utility.js" as Util
+
 Item {
     id: root
 
@@ -29,15 +31,35 @@ Item {
         return ret
     }
 
+    property bool width_not_very_small: {
+        var delta = center_line.width
+
+        return delta > 10
+    }
+
+    property bool width_not_kinda_small: {
+        var delta = center_line.width
+
+        return delta > 30
+    }
+
+//    property int format_fixed_points : {
+
+//    }
+
     property real line_heights: height * .9
+
+    property real line_opacity: .75
 
     property color line_color: "white"
     property color fill_color: "green"
 
+    property color resolved_line_color: Util.color_with_alpha(line_color, line_opacity)
+
     Rectangle {
         id: center_line
         height: 4
-        color: line_color
+        color: resolved_line_color
         anchors.verticalCenter: parent.verticalCenter
         width: (computed_x[4] - computed_x[0])
         x: computed_x[0]
@@ -47,16 +69,16 @@ Item {
         id: left_bar
         width: 1
         height: root.line_heights
-        color: line_color
+        color: resolved_line_color
         anchors.verticalCenter: parent.verticalCenter
 
         x: computed_x[0]
 
         Label {
-            text: data_array[0].toFixed(2)
-            anchors.bottom: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            opacity: root_mouse.containsMouse
+            text: data_array[0].toPrecision(3)
+            anchors.top: parent.bottom
+            anchors.right: parent.left
+            opacity: root_mouse.containsMouse && width_not_very_small
 
             font.pointSize: 8
 
@@ -72,16 +94,16 @@ Item {
         id: right_bar
         width: 1
         height: root.line_heights
-        color: line_color
+        color: resolved_line_color
         anchors.verticalCenter: parent.verticalCenter
 
         x: computed_x[4]
 
         Label {
-            text: data_array[4].toFixed(2)
-            anchors.bottom: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            opacity: root_mouse.containsMouse
+            text: data_array[4].toPrecision(3)
+            anchors.top: parent.bottom
+            anchors.left: parent.right
+            opacity: root_mouse.containsMouse && width_not_very_small
 
             font.pointSize: 8
 
@@ -105,11 +127,11 @@ Item {
         radius: 5
 
         Label {
-            text: data_array[1].toFixed(2)
+            text: data_array[1].toPrecision(3)
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: implicitHeight
             anchors.right: parent.left
-            opacity: root_mouse.containsMouse
+            opacity: root_mouse.containsMouse && width_not_kinda_small
 
             font.pointSize: 8
 
@@ -121,11 +143,11 @@ Item {
         }
 
         Label {
-            text: data_array[3].toFixed(2)
+            text: data_array[3].toPrecision(3)
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: implicitHeight
             anchors.left: parent.right
-            opacity: root_mouse.containsMouse
+            opacity: root_mouse.containsMouse && width_not_kinda_small
 
             font.pointSize: 8
 
@@ -147,7 +169,7 @@ Item {
         x: computed_x[2]
 
         Label {
-            text: data_array[2].toFixed(2)
+            text: data_array[2].toPrecision(3)
             anchors.bottom: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
             opacity: root_mouse.containsMouse
