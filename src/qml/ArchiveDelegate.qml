@@ -65,6 +65,8 @@ TransparentRectangle {
         onClicked: {
             root.clicked()
         }
+
+        enabled: !show_delete
     }
 
     EditLabel {
@@ -90,6 +92,7 @@ TransparentRectangle {
         }
 
         visible: show_delete
+        editable: show_delete
     }
 
     states: [
