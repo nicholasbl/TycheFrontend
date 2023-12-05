@@ -15,6 +15,8 @@ FlowScreen {
     property bool in_edit_mode: side_bar.edit_mode === 0
     property bool in_optim_mode: side_bar.edit_mode === 1
 
+    onTool_button_clicked: settings_pop.open()
+    enable_tool_button: true
 
     RowLayout {
         id: explore_root_view
@@ -58,7 +60,7 @@ FlowScreen {
                 delegate: CellDelegate {
                     implicitHeight: grid_view.row_height
                     implicitWidth: grid_view.column_width
-                    view_index: side_bar.view_type
+                    view_index: settings_pop.view_type
                     fill_color: Util.color_with_alpha(Material.color(Constants.all_colors[column]), .60)
 
                     data_min_bound: sim_result_model.metric_summary[column*2]
@@ -153,7 +155,7 @@ FlowScreen {
 
                                 height: grid_view.row_height
                                 width: grid_view.column_width - 1
-                                view_index: side_bar.view_type
+                                view_index: settings_pop.view_type
                                 fill_color: Util.color_with_alpha(Material.color(Constants.all_colors[index]), .60)
                                 border.width: 0
 
@@ -221,6 +223,12 @@ FlowScreen {
         }
 
 
+    }
+
+    SettingsPopup {
+        id: settings_pop
+        anchors.centerIn: Overlay.overlay
+        margins: 1
     }
 
     Component.onCompleted: {

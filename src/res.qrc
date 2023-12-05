@@ -21,7 +21,6 @@
         <file>images/NREL-logo-reversed.png</file>
         <file>images/NREL-logo.png</file>
         <file>images/shadow_r10.webp</file>
-        <file>images/shadow.pxd</file>
         <file>images/shadow.webp</file>
         <file>qml/DebugCellModel.qml</file>
         <file>qml/DebugMetricModel.qml</file>
@@ -46,5 +45,6 @@
         <file>qml/ArchiveDelegate.qml</file>
         <file>qml/ArchiveExplorePopup.qml</file>
         <file>qml/PortfolioOptPop.qml</file>
+        <file>qml/SettingsPopup.qml</file>
     </qresource>
 </RCC>

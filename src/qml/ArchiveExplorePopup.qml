@@ -34,7 +34,17 @@ Dialog {
                 id: large_archive_view
                 anchors.fill: parent
 
-                currentIndex: archive_view.currentIndex
+                //currentIndex: archive_view.currentIndex
+
+                onCurrentIndexChanged: {
+                    archive_model.select_run(currentIndex)
+                }
+
+                Component.onCompleted: {
+                    archive_model.new_run_ready.connect(function(){
+                        currentIndex = count - 1
+                    })
+                }
 
                 model: archive_model
 
@@ -62,10 +72,6 @@ Dialog {
                     show_delete: edit_stack.currentIndex > 0
 
                     state: del.GridView.isCurrentItem ? "selected" : ""
-                }
-
-                onCurrentIndexChanged: {
-                    archive_view.currentIndex = currentIndex
                 }
             }
         }

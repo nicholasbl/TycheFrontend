@@ -4,6 +4,36 @@
 #include <QBuffer>
 #include <QFileDialog>
 
+QString ArchiveModel::current_run_name() const {
+    return m_current_run_name;
+}
+
+void ArchiveModel::setCurrent_run_name(const QString& newCurrent_run_name) {
+    if (m_current_run_name == newCurrent_run_name) return;
+    m_current_run_name = newCurrent_run_name;
+    emit current_run_nameChanged();
+}
+
+QString ArchiveModel::current_run_type() const {
+    return m_current_run_type;
+}
+
+QDateTime ArchiveModel::current_run_time() const {
+    return m_current_run_time;
+}
+
+void ArchiveModel::setCurrent_run_time(const QDateTime& newCurrent_run_time) {
+    if (m_current_run_time == newCurrent_run_time) return;
+    m_current_run_time = newCurrent_run_time;
+    emit current_run_timeChanged();
+}
+
+void ArchiveModel::setCurrent_run_type(const QString& newCurrent_run_type) {
+    if (m_current_run_type == newCurrent_run_type) return;
+    m_current_run_type = newCurrent_run_type;
+    emit current_run_typeChanged();
+}
+
 int ArchiveModel::next_counter() {
     return m_run_counter++;
 }
@@ -91,7 +121,13 @@ void ArchiveModel::select_run(int index) {
 
     auto* ptr = get_at(index);
 
-    if (ptr) { emit this->data_selected(*ptr); }
+    if (!ptr) return;
+
+    setCurrent_run_name(ptr->archive_name);
+    setCurrent_run_type(ptr->type);
+    setCurrent_run_time(ptr->time_date);
+
+    emit this->data_selected(*ptr);
 }
 
 void ArchiveModel::delete_run(int index) {

@@ -14,10 +14,8 @@ Page {
         console.log("Default page advance")
     }
 
-    property var extra: Item {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-    }
+    property bool enable_tool_button: false
+    signal tool_button_clicked()
 
     header: TransparentRectangle {
         id: header_bar
@@ -80,6 +78,18 @@ Page {
                 verticalAlignment: Text.AlignVCenter
             }
         }
+
+        ToolButton {
+            visible: enable_tool_button
+            text: "\uf013"
+            font: loader.font
+            onClicked: root.tool_button_clicked()
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            anchors.rightMargin: 2
+        }
+
         layer.enabled: header_bar.Material.elevation > 0
         layer.effect: ElevationEffect {
             elevation: header_bar.Material.elevation

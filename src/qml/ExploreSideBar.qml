@@ -9,7 +9,6 @@ TransparentPane {
     id: side_bar
     background_opacity: .75
 
-    property alias view_type: view_selection.currentIndex
     property alias edit_mode: edit_stack.currentIndex
 
     ColumnLayout {
@@ -17,11 +16,11 @@ TransparentPane {
 
         RowLayout {
             Label {
-                text: "History"
+                text: "Current Run"
                 Layout.fillWidth: true
             }
             EditLabel {
-                text: "\uf2d0"
+                text: "\uf1da"
                 font: loader.font
 
                 editable: true
@@ -36,48 +35,80 @@ TransparentPane {
             }
         }
 
-        ListView {
-            id: archive_view
+        RowLayout {
             Layout.fillWidth: true
-            Layout.preferredHeight: 74
-            orientation: ListView.Horizontal
-            highlightFollowsCurrentItem: true
-            spacing: 5
 
-            model: archive_model
-
-            clip: true
-
-            delegate: ArchiveDelegate {
-                id: del
-                width: 72
-                height: 72
-
+            EditLabel {
+                Layout.fillHeight: true
+                text: "\uf0d9"
+                font.family: loader.font.family
+                font.pointSize: 18
+                editable: archive_view.count
+                verticalAlignment: Qt.AlignVCenter
                 onClicked: {
-                    archive_view.currentIndex = index
+                    if (archive_view.currentIndex > 0){
+                        archive_view.currentIndex = archive_view.currentIndex - 1
+                    }
+                }
+            }
+
+            ListView {
+                id: archive_view
+                Layout.fillWidth: true
+                Layout.preferredHeight: 74
+                orientation: ListView.Horizontal
+                highlightFollowsCurrentItem: true
+                spacing: 5
+
+                model: archive_model
+
+                clip: true
+
+                delegate: ArchiveDelegate {
+                    id: del
+                    width: ListView.view.width
+                    height: 72
+
+                    onClicked: {
+                        archive_view.currentIndex = index
+                    }
+
+                    state: del.ListView.isCurrentItem ? "selected" : ""
                 }
 
-                state: del.ListView.isCurrentItem ? "selected" : ""
+                Label {
+                    anchors.fill: parent
+                    horizontalAlignment: Label.AlignHCenter
+                    verticalAlignment: Label.AlignVCenter
+                    text: "No results"
+                    opacity: archive_view.count === 0
+                }
+
+                onCurrentIndexChanged: {
+                    archive_model.select_run(currentIndex)
+                }
+
+                Component.onCompleted: {
+                    archive_model.new_run_ready.connect(function(){
+                        archive_view.currentIndex = archive_view.count - 1
+                    })
+                }
+
             }
 
-            Label {
-                anchors.fill: parent
-                horizontalAlignment: Label.AlignHCenter
-                verticalAlignment: Label.AlignVCenter
-                text: "No results"
-                opacity: archive_view.count === 0
+            EditLabel {
+                Layout.fillHeight: true
+                text: "\uf0da"
+                font.family: loader.font.family
+                font.pointSize: 18
+                editable: archive_view.count
+                verticalAlignment: Qt.AlignVCenter
+                onClicked: {
+                    if (archive_view.currentIndex < archive_view.count - 1){
+                        archive_view.currentIndex = archive_view.currentIndex + 1
+                    }
+                }
             }
-
-            onCurrentIndexChanged: {
-                archive_model.select_run(currentIndex)
-            }
-
-            Component.onCompleted: {
-                archive_model.new_run_ready.connect(function(){
-                    archive_view.currentIndex = archive_view.count - 1
-                })
-            }
-
         }
 
         TabBar {
@@ -85,16 +116,10 @@ TransparentPane {
             Layout.fillWidth: true
 
             TabButton {
-                text: "\uf002"
-                font: loader.font
+                text: "Simulate"
             }
             TabButton {
-                text: "\ue522"
-                font: loader.font
-            }
-            TabButton {
-                text: "\uf013"
-                font: loader.font
+                text: "Optimize"
             }
         }
 
@@ -216,42 +241,6 @@ TransparentPane {
                         onClicked: sim_result_model.ask_run_optimize()
                     }
                 }
-
-            GridLayout {
-                    columns: 2
-
-                    Label {
-                        text: "Display"
-                        elide: Label.ElideRight
-                    }
-                    ComboBox {
-                        Layout.fillWidth: true
-                        id: view_selection
-
-                        model: ["Boxes", "Violin"]
-                    }
-                    Rectangle {
-                        Layout.preferredHeight: 2
-                        Layout.columnSpan: 2
-                        Layout.fillWidth: true
-                        color: Material.dividerColor
-                    }
-                    Button {
-                        Layout.columnSpan: 2
-                        text: "Export"
-                        Layout.fillWidth: true
-
-                        onClicked: export_pop.open()
-
-                        ExportPopup {
-                            id: export_pop
-                        }
-                    }
-                    Item {
-                        Layout.fillHeight: true
-                    }
-                }
-
         }
     }
 }
