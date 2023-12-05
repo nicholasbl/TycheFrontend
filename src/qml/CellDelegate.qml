@@ -63,8 +63,10 @@ Rectangle {
                 line_color: Material.background
                 //fill_color: root.fill_color
                 fill_color: Material.foreground
-                height_scale: .25
+                height_scale: .35
                 opacity: .75
+                center_box_radius: 0
+                center_box_line_is_circle: true
             }
         }
 

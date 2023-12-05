@@ -16,9 +16,26 @@ TransparentPane {
 
     Material.elevation: (click_area.containsMouse) ? 5 : 2
 
+    padding: 0
+
     Behavior on Material.elevation {
         NumberAnimation {
             duration: 250
+        }
+    }
+
+    RoundedImage {
+        id: back_image
+        radius: 10
+        asynchronous: true
+        fillMode: Image.PreserveAspectCrop
+        source: image_source
+        anchors.fill: parent
+        opacity: status === Image.Ready ? .20 : 0
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 250
+            }
         }
     }
 

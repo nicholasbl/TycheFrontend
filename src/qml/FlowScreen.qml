@@ -17,6 +17,8 @@ Page {
     property bool enable_tool_button: false
     signal tool_button_clicked()
 
+    property string help_text: ""
+
     header: TransparentRectangle {
         id: header_bar
         implicitHeight: 48
@@ -31,7 +33,7 @@ Page {
             anchors.bottom: parent.bottom
             anchors.leftMargin: 2
 
-            Material.elevation: 1
+            flat: true
 
             text: loader.icon_string("\uf053") + " Back"
             onClicked: swipeView.currentIndex -= 1
@@ -45,17 +47,37 @@ Page {
         }
 
         Label {
+            id: header_text_label
             text: root.header_text
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
 
-            anchors.left: back_button.right
-            anchors.right: continue_button.left
+            anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.bottom: parent.bottom
 
             font.bold: true
             font.pointSize: 16
+        }
+        RoundButton {
+            anchors.left: header_text_label.right
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            flat: true
+            text: "\uf059"
+            font: loader.font
+
+            //visible: help_text.length
+
+            onClicked: {
+                help_tip.open()
+            }
+
+            ToolTip {
+                id: help_tip
+                text: help_text
+                timeout: 10000
+            }
         }
 
         Button {
@@ -64,7 +86,7 @@ Page {
             text: "Continue " + loader.icon_string("\uf054")
             onClicked: proceed_to_next()
 
-            Material.elevation: 1
+            flat: true
 
             anchors.top: parent.top
             anchors.bottom: parent.bottom

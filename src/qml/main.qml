@@ -50,12 +50,6 @@ ApplicationWindow {
         initialItem: Introduction {
             id: intro_screen
 
-
-            width: Math.min(main_stack_view.width * .9, 640)
-            height: Math.min(main_stack_view.width * .9, 480)
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-
             onOnNext: main_stack_view.push(sim_path)
         }
 

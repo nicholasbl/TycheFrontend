@@ -43,6 +43,10 @@ Item {
         return delta > 30
     }
 
+    property bool center_box_line_is_circle: false
+
+    property real center_box_radius: 5
+
     property real height_scale: .9
 
     property real line_heights: height * height_scale
@@ -53,6 +57,7 @@ Item {
     property color fill_color: "green"
 
     property color resolved_line_color: Util.color_with_alpha(line_color, line_opacity)
+    property bool resolved_center_box_line_is_circle: center_box_line_is_circle && width_not_kinda_small
 
     Rectangle {
         id: center_line
@@ -122,7 +127,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         border.color: line_color
         border.width: 1
-        radius: 5
+        radius: center_box_radius
 
         Label {
             text: data_array[1].toPrecision(3)
@@ -159,10 +164,12 @@ Item {
 
     Rectangle {
         id: mid_line
-        width: 1
-        height: root.line_heights
+        width: resolved_center_box_line_is_circle ? height : 1
+        height: resolved_center_box_line_is_circle ? root.line_heights / 3 : root.line_heights
         color: line_color
         anchors.verticalCenter: parent.verticalCenter
+
+        radius: resolved_center_box_line_is_circle ? height / 2 : 0
 
         x: computed_x[2]
 

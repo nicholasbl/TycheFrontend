@@ -7,6 +7,8 @@ FlowScreen {
 
     header_text: "Select metrics for this scenario"
 
+    help_text: "Pick investment categories and metrics to use for your scenario. You can pick as many as you'd like, but three is a nice optimal number. If you are not sure what to pick, tap continue and the tool will pick some for you."
+
     before_page_forward: function() {
         category_model.finalize_choices()
         metric_model.finalize_choices()

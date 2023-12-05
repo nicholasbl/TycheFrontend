@@ -18,6 +18,8 @@ FlowScreen {
     onTool_button_clicked: settings_pop.open()
     enable_tool_button: true
 
+    help_text: "Explore the scenario using two methods: manual investment and optimized investment. In manual 'Simulate' mode, you can change sliders on investments and run simulations to see the results. In 'Optimize' mode, you can set some boundaries on metrics and let the system determine optimal investments for you."
+
     RowLayout {
         id: explore_root_view
         anchors.fill: parent
@@ -52,7 +54,7 @@ FlowScreen {
                     width
                     height
                     forceLayout()
-                    console.log("Recomputing layout")
+                    //console.log("Recomputing layout")
                     return true
                 }
 

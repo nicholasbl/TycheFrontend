@@ -7,6 +7,8 @@ FlowScreen {
     header_text: "Select a design scenario to explore"
     show_footer_back: false
 
+    help_text: "You can pick a design scenario here to explore."
+
     GridView {
         id: main_grid
         anchors.fill: parent
