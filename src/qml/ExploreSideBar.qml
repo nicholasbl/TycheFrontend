@@ -38,9 +38,12 @@ TransparentPane {
         RowLayout {
             Layout.fillWidth: true
 
+            Layout.preferredHeight: 74
+            Layout.maximumHeight: 74
+
             EditLabel {
                 Layout.fillHeight: true
-                text: "\uf0d9"
+                text: "\uf053"
                 font.family: loader.font.family
                 font.pointSize: 18
                 editable: archive_view.count
@@ -56,6 +59,7 @@ TransparentPane {
                 id: archive_view
                 Layout.fillWidth: true
                 Layout.preferredHeight: 74
+                Layout.maximumHeight: 74
                 orientation: ListView.Horizontal
                 highlightFollowsCurrentItem: true
                 spacing: 5
@@ -98,7 +102,7 @@ TransparentPane {
 
             EditLabel {
                 Layout.fillHeight: true
-                text: "\uf0da"
+                text: "\uf054"
                 font.family: loader.font.family
                 font.pointSize: 18
                 editable: archive_view.count
@@ -198,6 +202,17 @@ TransparentPane {
 
             ColumnLayout {
 
+                    property bool is_current_pane: edit_stack.currentIndex === 1
+
+                    onIs_current_paneChanged: {
+                        if (is_current_pane){
+                            if (target_metric_combo.currentIndex < 0) {
+                                console.log("No target metric selected, fixup")
+                                target_metric_combo.currentIndex = 0
+                            }
+                        }
+                    }
+
                     Label {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -207,6 +222,7 @@ TransparentPane {
                     }
 
                     ComboBox {
+                        id: target_metric_combo
                         Layout.fillWidth: true
                         model: selected_metric_model
                         textRole: "name"

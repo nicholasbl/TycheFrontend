@@ -304,6 +304,8 @@ void SimResultModel::load_data_from(RunArchive const& archive) {
 
     if (!result.opt_metric_id.isEmpty()) {
         set_optimize_target_metric_id(result.opt_metric_id);
+    } else if (auto p = m_metrics->get_at(0); p) {
+        set_optimize_target_metric_id(p->id);
     }
 
     // resize

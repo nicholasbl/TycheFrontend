@@ -8,12 +8,23 @@ import "./utility.js" as Util
 Dialog {
     title: "Portfolio Optimization"
 
+    onOpened: {
+        if (min_max_combo.currentValue === "max" && sim_result_model.opt_portfolio_amount < 1) {
+            let new_val = sim_result_model.max_opt_portfolio_amount / 2;
+            if (new_val > 1){
+                sim_result_model.opt_portfolio_amount = new_val
+                portfolio_amount_slider.value = new_val
+            }
+        }
+    }
+
     ColumnLayout {
         Label {
             Layout.fillWidth: true
             text: "Select a minimum or maximum portfolio bound for the optimizer"
         }
         ComboBox {
+            id: min_max_combo
             Layout.fillWidth: true
             textRole: "text"
             valueRole: "value"
@@ -40,6 +51,7 @@ Dialog {
         }
 
         TextField {
+            id: portfolio_limit_text
             Layout.fillWidth: true
             placeholderText: "Portfolio limit"
             text: Util.format_money(sim_result_model.opt_portfolio_amount)
@@ -56,6 +68,7 @@ Dialog {
 
         RowLayout {
             Slider {
+                id: portfolio_amount_slider
                 Layout.fillWidth: true
                 from: 0
                 to: sim_result_model.max_opt_portfolio_amount
