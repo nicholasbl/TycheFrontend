@@ -14,6 +14,8 @@ struct CategoryRecord {
     qint64 investment     = 0;
     qint64 max_investment = 1000000;
 
+    qint64 opt_limit = -1;
+
     bool selected = false;
 
     MAKE_META(MetaMember(&CategoryRecord::name, "name"),
@@ -22,6 +24,7 @@ struct CategoryRecord {
               MetaMember(&CategoryRecord::id, "category_id"),
               MetaMember(&CategoryRecord::investment, "investment", true),
               MetaMember(&CategoryRecord::max_investment, "max_investment"),
+              MetaMember(&CategoryRecord::opt_limit, "opt_limit"),
               MetaMember(&CategoryRecord::selected, "selected", true));
 
     template <class Archive>
@@ -32,6 +35,8 @@ struct CategoryRecord {
         a("id", id);
         a("starting_investment", investment);
         a("max_investment", max_investment);
+        a("opt_limit", opt_limit);
+        a("selected", selected);
     }
 };
 

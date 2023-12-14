@@ -65,6 +65,7 @@ void ArchiveModel::ask_run_scenario(AskRunScenario state,
             &JSONRpcMethod::request_success,
             this,
             [=, this](QJsonValue doc) {
+                // qDebug() << "DOC" << doc;
                 AskRunResult new_sim_data;
                 from_json(doc, new_sim_data);
 

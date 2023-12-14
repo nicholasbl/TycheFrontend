@@ -31,14 +31,25 @@ struct AskReplyMetric {
     }
 };
 
+struct AskReplyCategory {
+    qint64 limit = -1;
+    qint64 value = 0;
+
+    template <class Archive>
+    void archive(Archive& a) {
+        a("limit", limit);
+        a("value", value);
+    }
+};
+
 struct AskRunResult {
     QString scenario_id;
 
     QString opt_metric_id;
     QString opt_sense;
 
-    QHash<QString, qint64> cat_state;
-    QHash<QString, AskReplyMetric> met_state;
+    QHash<QString, AskReplyMetric>   metric_limits;
+    QHash<QString, AskReplyCategory> category_limits;
 
     QHash<QString, QHash<QString, QVector<float>>> cells;
 
@@ -47,8 +58,8 @@ struct AskRunResult {
         a("scenario_id", scenario_id);
         a("opt_metric_id", opt_metric_id);
         a("opt_sense", opt_sense);
-        a("category_state", cat_state);
-        a("metric_state", met_state);
+        a("metric_limits", metric_limits);
+        a("category_limits", category_limits);
         a("cells", cells);
     }
 };
@@ -68,12 +79,25 @@ struct AskRunOptimMetric {
     }
 };
 
+struct AskRunOptimCategory {
+    QString metric_id;
+    qint64  value;
+
+    template <class Archive>
+    void archive(Archive& a) {
+        a("metric_id", metric_id);
+        a("value", value);
+    }
+};
+
+
 struct AskRunOptim {
     QString                    scenario_id;
     qint64                     portfolio;
     QString                    metric_target;
     QString                    optim_sense;
     QVector<AskRunOptimMetric> metric_states;
+    QVector<AskRunOptimCategory> category_states;
 
     template <class Archive>
     void archive(Archive& a) {
@@ -82,6 +106,7 @@ struct AskRunOptim {
         a("metric_target", metric_target);
         a("optimize_sense", optim_sense);
         a("metric_states", metric_states);
+        a("category_states", category_states);
     }
 };
 

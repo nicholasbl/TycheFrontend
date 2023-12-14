@@ -320,16 +320,18 @@ void SimResultModel::load_data_from(RunArchive const& archive) {
     auto& main_met = *m_metrics->host();
 
     main_cat.update_all([&](CategoryRecord& r, int) {
-        r.investment = result.cat_state.value(r.id);
+        auto value   = result.category_limits.value(r.id);
+        r.investment = value.value;
+        r.opt_limit  = value.limit;
     });
 
     main_met.update_all([&](MetricRecord& r, int) {
         r.bound_type  = "";
         r.optim_value = 0;
 
-        auto iter = result.met_state.find(r.id);
+        auto iter = result.metric_limits.find(r.id);
 
-        if (iter != result.met_state.end()) {
+        if (iter != result.metric_limits.end()) {
             qDebug() << "CAN UPDATE METRIC" << iter.value().sense
                      << iter.value().limit;
             r.bound_type  = iter.value().sense;
