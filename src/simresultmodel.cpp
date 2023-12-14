@@ -323,6 +323,7 @@ void SimResultModel::load_data_from(RunArchive const& archive) {
         auto value   = result.category_limits.value(r.id);
         r.investment = value.value;
         r.opt_limit  = value.limit;
+        qDebug() << "Loading up cat opt" << r.investment << r.opt_limit;
     });
 
     main_met.update_all([&](MetricRecord& r, int) {
@@ -418,6 +419,7 @@ void SimResultModel::ask_run_optimize() {
     state.optim_sense   = m_optimize_target_sense;
 
     auto* metric_list = m_metrics->host();
+    auto* category_list = m_categories->host();
 
     for (auto const& m : *metric_list) {
 
@@ -428,6 +430,15 @@ void SimResultModel::ask_run_optimize() {
             .metric_id  = m.id,
             .value      = m.optim_value,
             .bound_type = m.bound_type,
+        };
+    }
+
+    for (auto const& c : *category_list) {
+        auto limit = c.opt_limit > 0 ? c.opt_limit : opt_portfolio_amount();
+
+        state.category_states << AskRunOptimCategory {
+            .category_id = c.id,
+            .value       = limit,
         };
     }
 

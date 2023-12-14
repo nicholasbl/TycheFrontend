@@ -80,12 +80,12 @@ struct AskRunOptimMetric {
 };
 
 struct AskRunOptimCategory {
-    QString metric_id;
+    QString category_id;
     qint64  value;
 
     template <class Archive>
     void archive(Archive& a) {
-        a("metric_id", metric_id);
+        a("category_id", category_id);
         a("value", value);
     }
 };

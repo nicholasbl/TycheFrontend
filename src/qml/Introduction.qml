@@ -45,7 +45,7 @@ Item {
 
             Rectangle {
                 Layout.preferredHeight: 1
-                Layout.preferredWidth: 150
+                Layout.fillWidth: true
                 color: Material.dividerColor
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
             }
@@ -61,7 +61,7 @@ Item {
 
             Rectangle {
                 Layout.preferredHeight: 1
-                Layout.preferredWidth: 150
+                Layout.fillWidth: true
                 color: Material.dividerColor
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
             }

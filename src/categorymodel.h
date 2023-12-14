@@ -24,7 +24,7 @@ struct CategoryRecord {
               MetaMember(&CategoryRecord::id, "category_id"),
               MetaMember(&CategoryRecord::investment, "investment", true),
               MetaMember(&CategoryRecord::max_investment, "max_investment"),
-              MetaMember(&CategoryRecord::opt_limit, "opt_limit"),
+              MetaMember(&CategoryRecord::opt_limit, "opt_limit", true),
               MetaMember(&CategoryRecord::selected, "selected", true));
 
     template <class Archive>

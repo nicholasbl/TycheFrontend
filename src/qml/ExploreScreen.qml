@@ -97,6 +97,7 @@ FlowScreen {
                             width: grid_view.column_width
 
                            in_edit_mode: root.in_edit_mode
+                           in_opt_mode:  root.in_optim_mode
                         }
                     }
                 }
@@ -129,20 +130,40 @@ FlowScreen {
                                 font.pointSize: 14
                             }
 
-                            EditLabel {
-                                font.pointSize: 18
-                                text: Util.format_money(sim_result_model.total_value)
-                                Layout.alignment: Qt.AlignRight
+                            RowLayout {
+                                Layout.fillWidth: true
 
-                                editable: in_optim_mode
+                                EditLabel {
+                                    id: bounding_investment_label
+                                    font.pointSize: 16
 
-                                PortfolioOptPop {
-                                    id: port_opt_pop
-                                    margins: 1
+                                    text: loader.icon_string("\ue4c2 ") + Util.format_money(sim_result_model.opt_portfolio_amount)
+                                    textFormat: EditLabel.RichText
+
+                                    visible: in_optim_mode
+                                    editable: in_optim_mode
+
+                                    Layout.alignment: Qt.AlignLeft
+                                    Layout.leftMargin: 5
+
+                                    onClicked: port_opt_pop.open()
                                 }
 
-                                onClicked: port_opt_pop.open()
+                                Item {
+                                    Layout.fillWidth: true
+                                }
+
+                                Label {
+                                    font.pointSize: 18
+                                    text: Util.format_money(sim_result_model.total_value)
+                                    Layout.alignment: Qt.AlignRight
+                                }
                             }
+                        }
+
+                        PortfolioOptPop {
+                            id: port_opt_pop
+                            margins: 1
                         }
                     }
 

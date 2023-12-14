@@ -191,8 +191,6 @@ public:
                  QVariant const&    value,
                  int                role = Qt::EditRole) override {
 
-        qDebug() << Q_FUNC_INFO << index << value << role;
-
         if (data(index, role) == value) return false;
 
         auto& item = m_records[index.row()];
@@ -208,6 +206,8 @@ public:
         if (location >= m_header.size()) return false;
 
         bool ok = record_runtime_set(item, location, value);
+
+        qDebug() << Q_FUNC_INFO << index << value << role << ok;
 
         if (!ok) return false;
 

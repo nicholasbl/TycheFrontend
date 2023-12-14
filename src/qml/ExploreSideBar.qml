@@ -216,7 +216,7 @@ TransparentPane {
                     Label {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        text: "Select a metric to optimize, metric optimization goals, as well as portfolio optimization bounds. Then tap optimize to see allocations"
+                        text: "Select a metric to optimize, optimization goals, as well as portfolio optimization bounds. Then tap optimize to see allocations"
                         wrapMode: Label.WrapAtWordBoundaryOrAnywhere
                         elide: Label.ElideRight
                     }

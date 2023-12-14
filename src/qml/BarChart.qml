@@ -164,12 +164,23 @@ Item {
 
     Rectangle {
         id: mid_line
-        width: resolved_center_box_line_is_circle ? height : 1
-        height: resolved_center_box_line_is_circle ? root.line_heights / 3 : root.line_heights
+
+        Rectangle {
+            anchors.centerIn: parent
+            id: mid_line_dot
+
+            visible: resolved_center_box_line_is_circle
+
+            width: height
+            height: root.line_heights / 3
+
+            radius: height / 2
+        }
+
+        width: 1
+        height: root.line_heights
         color: line_color
         anchors.verticalCenter: parent.verticalCenter
-
-        radius: resolved_center_box_line_is_circle ? height / 2 : 0
 
         x: computed_x[2]
 

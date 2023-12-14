@@ -55,7 +55,8 @@ Item {
                 horizontalAlignment: Qt.AlignHCenter
                 verticalAlignment: Qt.AlignVCenter
 
-                editable: enable_editing
+                // disabled for now
+                //editable: enable_editing
 
                 onClicked: edit_opts.open()
             }

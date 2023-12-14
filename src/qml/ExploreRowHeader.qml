@@ -9,6 +9,8 @@ Item {
     id: root
     property bool in_edit_mode: false
 
+    property bool in_opt_mode: false
+
     SelectableRectangle {
         anchors.fill: parent
         anchors.margins: 1
@@ -47,16 +49,40 @@ Item {
             Layout.fillWidth: true
         }
 
-        EditLabel {
-            id: current_investment_label
-            font.pointSize: 18
-            text: Util.format_money(investment)
+        RowLayout {
+            Layout.fillWidth: true
 
-            editable: in_edit_mode
+            EditLabel {
+                id: bounding_investment_label
+                font.pointSize: 16
 
-            Layout.alignment: Qt.AlignRight
+                text: loader.icon_string("\ue4c2 ") + Util.format_money(opt_limit >= 0 ? opt_limit : 0)
+                textFormat: EditLabel.RichText
 
-            onClicked: edit_popup.open()
+                visible: in_opt_mode && sim_result_model.opt_portfolio_amount
+                editable: in_opt_mode && sim_result_model.opt_portfolio_amount
+
+                Layout.alignment: Qt.AlignLeft
+                Layout.leftMargin: 5
+
+                onClicked: opt_popup.open()
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            EditLabel {
+                id: current_investment_label
+                font.pointSize: 18
+                text: Util.format_money(investment)
+
+                editable: in_edit_mode
+
+                Layout.alignment: Qt.AlignRight
+
+                onClicked: edit_popup.open()
+            }
         }
     }
 
@@ -157,6 +183,96 @@ Item {
                 Label {
                     font.pointSize: 18
                     text: Util.format_money(investment)
+                    Layout.alignment: Qt.AlignRight
+                }
+            }
+        }
+    }
+
+    Popup {
+        id: opt_popup
+        margins: 1
+
+        property int last_value: 0
+
+        onOpened: {
+            last_value = opt_limit
+            invest_slider.value = opt_limit
+        }
+
+        ColumnLayout {
+            anchors.fill: parent
+            RowLayout {
+                Label {
+                    Layout.fillWidth: true
+                    text: "Investment limit"
+
+                    color: Material.backgroundDimColor
+                }
+                Label {
+                    text: name
+                    font.pointSize: 18
+                }
+            }
+
+            Rectangle {
+                Layout.preferredHeight: 1
+                Layout.fillWidth: true
+                color: Material.dividerColor
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+
+
+                Slider {
+                    id: opt_slider
+                    from: 0
+                    to: {
+                        var max_port = sim_result_model.opt_portfolio_amount
+
+                        if (max_port < 1) {
+                            return max_investment
+                        }
+
+                        return max_port
+                    }
+
+                    stepSize: 1
+                    value: opt_limit >= 0 ? opt_limit : 0
+
+                    onMoved: {
+                        opt_limit = value
+                    }
+                }
+
+                Label {
+                    text: Util.format_money(opt_slider.to)
+                }
+
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                RoundButton {
+                    flat: true
+                    font: loader.font
+                    text: "\uf2ea"
+                    highlighted: true
+
+                    onClicked: {
+                        opt_limit = edit_popup.last_value
+                        invest_slider.value = edit_popup.last_value
+                    }
+                }
+
+                Item {
+                    Layout.fillWidth: true
+                }
+
+                Label {
+                    font.pointSize: 18
+                    text: Util.format_money(opt_slider.value)
                     Layout.alignment: Qt.AlignRight
                 }
             }
