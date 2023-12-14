@@ -50,7 +50,8 @@ signals:
 
     void new_run_ready();
 
-    void error_from_sim(QString);
+    void sim_exception(QString);
+    void sim_system_failure(QString);
 
     void current_run_nameChanged();
     void current_run_timeChanged();

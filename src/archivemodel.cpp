@@ -53,28 +53,36 @@ void ArchiveModel::ask_run_scenario(AskRunScenario state,
         JSONRpcMethod::invoke("run_scenario", QJsonArray() << to_json(state));
 
     connect(method,
-            &JSONRpcMethod::request_failure,
+            &JSONRpcMethod::request_system_error,
             this,
-            &ArchiveModel::error_from_sim);
+            &ArchiveModel::sim_system_failure);
+    connect(method,
+            &JSONRpcMethod::request_exception,
+            this,
+            &ArchiveModel::sim_exception);
 
-    connect(method, &JSONRpcMethod::request_success, this, [=](QJsonValue doc) {
-        AskRunResult new_sim_data;
-        from_json(doc, new_sim_data);
+    connect(method,
+            &JSONRpcMethod::request_success,
+            this,
+            [=, this](QJsonValue doc) {
+                AskRunResult new_sim_data;
+                from_json(doc, new_sim_data);
 
-        auto new_run = RunArchive {
-            .archive_name = QString("%1 (%2)").arg(scenario.name).arg(this_id),
-            .type         = "Simulation",
-            .scenario     = scenario,
-            .time_date    = QDateTime::currentDateTime(),
-            .run_result   = std::move(new_sim_data),
-            .selected_metrics    = selected_metrics,
-            .selected_categories = selected_categories,
-        };
+                auto new_run = RunArchive {
+                    .archive_name =
+                        QString("%1 (%2)").arg(scenario.name).arg(this_id),
+                    .type                = "Simulation",
+                    .scenario            = scenario,
+                    .time_date           = QDateTime::currentDateTime(),
+                    .run_result          = std::move(new_sim_data),
+                    .selected_metrics    = selected_metrics,
+                    .selected_categories = selected_categories,
+                };
 
-        this->append(new_run);
+                this->append(new_run);
 
-        emit this->new_run_ready();
-    });
+                emit this->new_run_ready();
+            });
 }
 
 void ArchiveModel::ask_run_optimize(AskRunOptim    state,
@@ -89,9 +97,13 @@ void ArchiveModel::ask_run_optimize(AskRunOptim    state,
                                          QJsonArray() << to_json(state));
 
     connect(method,
-            &JSONRpcMethod::request_failure,
+            &JSONRpcMethod::request_system_error,
             this,
-            &ArchiveModel::error_from_sim);
+            &ArchiveModel::sim_system_failure);
+    connect(method,
+            &JSONRpcMethod::request_exception,
+            this,
+            &ArchiveModel::sim_exception);
 
     connect(method, &JSONRpcMethod::request_success, this, [=](QJsonValue doc) {
         // qDebug() << doc;

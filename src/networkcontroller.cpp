@@ -9,34 +9,6 @@
 #include <QUuid>
 
 
-template <class... Ts>
-struct overloaded : Ts... {
-    using Ts::operator()...;
-};
-template <class... Ts>
-overloaded(Ts...) -> overloaded<Ts...>;
-
-struct MethodResult {
-    std::variant<QJsonValue, QString> storage;
-
-    MethodResult() = default;
-    MethodResult(QJsonValue);
-    MethodResult(QString);
-
-    template <class SuccessF, class FailF>
-    void visit(SuccessF&& sf, FailF&& ff) {
-        std::visit(overloaded { [&](QJsonValue doc) { sf(doc); },
-                                [&](QString err) { ff(err); } },
-                   storage);
-    }
-};
-
-MethodResult::MethodResult(QJsonValue doc) : storage(doc) { }
-MethodResult::MethodResult(QString string) : storage(string) { }
-
-
-// =============================================================================
-
 static QString& get_default_host() {
     static QString host;
     return host;
@@ -66,17 +38,20 @@ JSONRpcMethod* JSONRpcMethod::invoke(QString method_name, QJsonArray params) {
         get_default_host(), method_name, QJsonDocument(params), get_manager());
 }
 
-static MethodResult sanitize_result(QNetworkReply* reply, QString id) {
+void JSONRpcMethod::sanitize_result(QNetworkReply* reply, QString id) {
     if (reply->error() != QNetworkReply::NoError) {
         qWarning() << "RPC network error:" << reply->errorString();
-        return QString("RPC networking error:" + reply->errorString());
+        emit request_system_error("RPC networking error:" +
+                                  reply->errorString());
+        return;
     }
 
     auto bytes = reply->readAll();
 
     if (bytes.isEmpty()) {
         qWarning() << "RPC response is empty";
-        return QString("RPC response is empty");
+        emit request_system_error("RPC response is empty");
+        return;
     }
 
     QJsonParseError error;
@@ -87,44 +62,61 @@ static MethodResult sanitize_result(QNetworkReply* reply, QString id) {
 
         qWarning() << "Context:" << bytes.mid(error.offset - 50, 100);
 
-        return QString("Failed to parse response");
+        emit request_system_error("Failed to parse response");
+        return;
     }
 
     auto object = document.object();
 
     if (object["jsonrpc"] != "2.0") {
         qWarning() << "Unable to parse RPC response";
-        return QString("Failed to parse response");
+        emit request_system_error("Failed to parse response");
+        return;
     }
 
     if (object["id"].toString() != id) {
         qWarning() << "Wrong reply id";
-        return QString("Bad reply ID");
+        emit request_system_error("Bad reply ID");
+        return;
     }
 
+    // first find a result
     auto iter = object.constFind("result");
 
-    if (iter != object.constEnd()) { return MethodResult(*iter); }
+    // if we have a result, return it
+    if (iter != object.constEnd()) {
+        emit request_success(*iter);
+        return;
+    }
 
+    // otherwise we are looking for the exception info
     iter = object.constFind("error");
 
     if (iter != object.constEnd()) {
         auto err_obj = iter->toObject();
 
-        auto code    = err_obj["code"].toInt();
+        auto code    = err_obj["code"].toInt(-1);
         auto message = err_obj["message"].toString();
-        auto data    = err_obj["data"];
-
-        QString err_str =
-            QString("Method failed: %1: %2").arg(code).arg(message);
+        auto data    = err_obj["data"].toString();
 
         qWarning() << "Method failed: " << code << ":" << message << "-"
                    << data;
 
-        return err_str;
+        if (code < 0) {
+            QString err_str =
+                QString("Method failed: %1: %2").arg(message, data);
+
+            emit request_system_error(err_str);
+            return;
+        }
+
+        emit request_exception(message);
+
+        return;
     }
 
-    return QString("Malformed reply from server");
+    // if we dont have either, we have a problem.
+    emit request_system_error("Malformed reply from server");
 }
 
 JSONRpcMethod::JSONRpcMethod(QString                host,
@@ -167,10 +159,6 @@ JSONRpcMethod::JSONRpcMethod(QString                host,
 
     connect(reply, &QNetworkReply::finished, this, [reply, this]() {
         this->deleteLater();
-        auto result = sanitize_result(reply, m_id);
-
-        result.visit(
-            [this](QJsonValue result) { emit this->request_success(result); },
-            [this](QString err) { emit this->request_failure(err); });
+        sanitize_result(reply, m_id);
     });
 }

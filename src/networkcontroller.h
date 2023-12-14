@@ -6,13 +6,14 @@
 #include <QJsonValue>
 #include <QObject>
 
-#include <variant>
-
 class QNetworkAccessManager;
+class QNetworkReply;
 
 class JSONRpcMethod : public QObject {
     Q_OBJECT
     QString m_id;
+
+    void sanitize_result(QNetworkReply* reply, QString id);
 
     JSONRpcMethod(QString                host,
                   QString                method_name,
@@ -28,7 +29,8 @@ public:
 
 signals:
     void request_success(QJsonValue);
-    void request_failure(QString);
+    void request_system_error(QString);
+    void request_exception(QString);
 };
 
 

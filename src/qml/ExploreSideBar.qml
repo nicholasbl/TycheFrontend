@@ -246,6 +246,40 @@ TransparentPane {
                         }
                     }
 
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Label {
+                            Layout.fillWidth: true
+                            text: "Sense"
+                        }
+                        ComboBox {
+                            id: min_max_combo
+                            Layout.fillWidth: true
+                            textRole: "text"
+                            valueRole: "value"
+                            model: [
+                                { value: "min", text: "Minimum"},
+                                { value: "max", text: "Maximum"}
+                            ]
+
+                            onActivated: sim_result_model.optimize_target_sense = currentValue
+
+                            Component.onCompleted: {
+                                if (count === 0) {
+                                    currentIndex = -1
+                                    return
+                                }
+
+                                var idx = indexOfValue(sim_result_model.optimize_target_sense)
+
+                                if (idx < 0) id = 0
+
+                                currentIndex = idx
+                            }
+
+                        }
+                    }
+
                     Rectangle {
                         Layout.preferredHeight: 2
                         Layout.fillWidth: true

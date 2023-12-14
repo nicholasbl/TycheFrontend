@@ -27,7 +27,11 @@ void ScenarioModel::refresh_scenario_list() {
             this,
             &ScenarioModel::new_scenario_list);
     connect(reply,
-            &JSONRpcMethod::request_failure,
+            &JSONRpcMethod::request_system_error,
+            this,
+            &ScenarioModel::scenario_fetch_failure);
+    connect(reply,
+            &JSONRpcMethod::request_exception,
             this,
             &ScenarioModel::scenario_fetch_failure);
 }
