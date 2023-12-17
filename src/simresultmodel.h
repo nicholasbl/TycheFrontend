@@ -11,8 +11,10 @@ class SelectedCategoryModel;
 class SelectedMetricModel;
 class SimResultSumModel;
 class ArchiveModel;
+class OptimizationResultModel;
 
 struct RunArchive;
+struct AskRunOptimResult;
 
 struct Cell {
     QVector<float> raw_data;
@@ -36,10 +38,11 @@ struct Cell {
 class SimResultModel : public QAbstractTableModel {
     Q_OBJECT
 
-    QPointer<SelectedMetricModel>   m_metrics;
-    QPointer<SelectedCategoryModel> m_categories;
-    QPointer<SimResultSumModel>     m_sim_sum_model;
-    QPointer<ArchiveModel>          m_archive_model;
+    QPointer<SelectedMetricModel>     m_metrics;
+    QPointer<SelectedCategoryModel>   m_categories;
+    QPointer<SimResultSumModel>       m_sim_sum_model;
+    QPointer<ArchiveModel>            m_archive_model;
+    QPointer<OptimizationResultModel> m_opt_archive_model;
 
     ScenarioRecord m_current_scenario;
 
@@ -109,6 +112,7 @@ public:
                             SelectedCategoryModel*,
                             SimResultSumModel*,
                             ArchiveModel*,
+                            OptimizationResultModel*,
                             QObject* parent = nullptr);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -163,6 +167,7 @@ public slots:
     void ask_save_image(QImage);
 
     void load_data_from(RunArchive const&);
+    void load_from(AskRunOptimResult const&);
 
 signals:
     void all_cell_stats_changed();

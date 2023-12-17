@@ -3,7 +3,7 @@ fn get_scenarios() -> scenario_list
 
 fn run_scenario( scenario_state ) -> run_result
 
-fn optimize_scenario( scenario_opt ) -> run_result
+fn optimize_scenario( scenario_opt ) -> opt_result
 
 
 // Definitions
@@ -36,7 +36,7 @@ metric : {
 }
 
 
-//
+// simulation inputs ===========================================================
 
 scenario_state : {
     scenario_id: uuid
@@ -48,11 +48,29 @@ state_dict : {
     ...
 }
 
-//
+// simulation outputs ==========================================================
+
+run_result : {
+    scenario_id : uuid,
+
+    category_states: state_dict
+
+    cells: cell_dict
+}
+
+cell_dict : {
+    cat_uuid : { metric_uuid : cell, ... }
+    ...
+}
+
+cell : [ float, ... ]
+
+// optimization inputs =========================================================
 
 scenario_opt : {
     scenario_id: uuid
     portfolio : int
+    optim_sense : string
     metric_target: metric_uuid
     metric_states: [ metric_opt ]
     category_states: [ category_opt ]
@@ -69,31 +87,25 @@ category_opt : {
     value: int
 }
 
+// optimization outputs ========================================================
 
-//
-run_result : {
-    scenario_id : uuid,
+opt_result : {
+    scenario_id: uuid
 
-    metric_limits : { metric_uuid : met_limi }
+    opt_metric_id: metric_uuid
+    optim_sense  : string
+
+    metric_limits : { metric_uuid : met_limit }
     category_limits : { category_uuid : cat_limit }
-
-    cells: cell_dict
-    opt_metric_id: metric_uuid // optional
 }
 
 met_limit : {
     sense : string
     limit : float
+    value : float
 }
 
 cat_limit : {
     limit : int // from optimizer, limit this category
     value : int // investment value
 }
-
-cell_dict : {
-    cat_uuid : { metric_uuid : cell, ... }
-    ...
-}
-
-cell : [ float, ... ]

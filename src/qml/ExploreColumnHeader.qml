@@ -6,7 +6,11 @@ import "Global"
 import "./utility.js" as Util
 
 Item {
+    id: root
+
     property bool enable_editing: false
+
+    property bool round_all: false
 
     SelectableRectangle {
         anchors.fill: parent
@@ -14,6 +18,8 @@ Item {
         anchors.bottomMargin: 0
         upper_left: 10
         upper_right: 10
+        lower_left: round_all ? 10 : 0
+        lower_right: round_all ? 10 : 0
 
         border_color: Material.dividerColor
         border_width: 1

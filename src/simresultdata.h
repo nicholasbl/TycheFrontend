@@ -23,11 +23,13 @@ struct AskRunScenario {
 struct AskReplyMetric {
     QString sense;
     float   limit = 0;
+    float   value = 0;
 
     template <class Archive>
     void archive(Archive& a) {
         a("limit", limit);
         a("sense", sense);
+        a("value", value);
     }
 };
 
@@ -45,21 +47,14 @@ struct AskReplyCategory {
 struct AskRunResult {
     QString scenario_id;
 
-    QString opt_metric_id;
-    QString opt_sense;
-
-    QHash<QString, AskReplyMetric>   metric_limits;
-    QHash<QString, AskReplyCategory> category_limits;
+    QHash<QString, qint64> category_states;
 
     QHash<QString, QHash<QString, QVector<float>>> cells;
 
     template <class Archive>
     void archive(Archive& a) {
         a("scenario_id", scenario_id);
-        a("opt_metric_id", opt_metric_id);
-        a("opt_sense", opt_sense);
-        a("metric_limits", metric_limits);
-        a("category_limits", category_limits);
+        a("category_states", category_states);
         a("cells", cells);
     }
 };
@@ -107,6 +102,24 @@ struct AskRunOptim {
         a("optimize_sense", optim_sense);
         a("metric_states", metric_states);
         a("category_states", category_states);
+    }
+};
+
+struct AskRunOptimResult {
+    QString scenario_id;
+    QString opt_metric_id;
+    QString opt_sense;
+
+    QHash<QString, AskReplyMetric>   metric_limits;
+    QHash<QString, AskReplyCategory> category_limits;
+
+    template <class Archive>
+    void archive(Archive& a) {
+        a("scenario_id", scenario_id);
+        a("opt_metric_id", opt_metric_id);
+        a("opt_sense", opt_sense);
+        a("metric_limits", metric_limits);
+        a("category_limits", category_limits);
     }
 };
 

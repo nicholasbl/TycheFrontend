@@ -131,15 +131,24 @@ bool record_runtime_set(Record& r, int i, QVariant const& v) {
     return ret;
 }
 
+class StructTableModelBase : public QAbstractTableModel {
+    Q_OBJECT
+public:
+    using QAbstractTableModel::QAbstractTableModel;
+
+public slots:
+    QVariant get_ui_data(int row, QString name);
+};
+
 template <class Record>
-class StructTableModel : public QAbstractTableModel {
+class StructTableModel : public StructTableModelBase {
     QVector<Record> m_records;
 
     QStringList const m_header;
 
 public:
     explicit StructTableModel(QObject* parent = nullptr)
-        : QAbstractTableModel(parent), m_header(get_header<Record>()) { }
+        : StructTableModelBase(parent), m_header(get_header<Record>()) { }
 
     // Header:
     QVariant headerData(int             section,

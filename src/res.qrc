@@ -46,5 +46,7 @@
         <file>qml/ArchiveExplorePopup.qml</file>
         <file>qml/PortfolioOptPop.qml</file>
         <file>qml/SettingsPopup.qml</file>
+        <file>qml/NewOptimPop.qml</file>
+        <file>qml/SpiderPlot.qml</file>
     </qresource>
 </RCC>

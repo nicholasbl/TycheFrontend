@@ -62,10 +62,14 @@ class SelectedCategoryModel : public QSortFilterProxyModel {
     QPointer<CategoryModel> m_host;
 
     qint64 m_maximum_investment;
+    qint64 m_opt_funds_used;
 
     Q_PROPERTY(
         qint64 maximum_investment READ maximum_investment WRITE
             set_maximum_investment NOTIFY maximum_investment_changed FINAL)
+
+    Q_PROPERTY(qint64 opt_funds_used READ opt_funds_used WRITE
+                   set_opt_funds_used NOTIFY opt_funds_used_changed FINAL)
 
 public:
     SelectedCategoryModel(CategoryModel*);
@@ -87,8 +91,17 @@ public:
         }
     }
 
+    qint64 opt_funds_used() const;
+    void   set_opt_funds_used(qint64 newOpt_funds_used);
+
+    void reset_all_opts();
+
 signals:
     void maximum_investment_changed();
+    void opt_funds_used_changed();
+
+public slots:
+    QVariant get_ui_data(int row, QString name);
 
 private slots:
     void recompute_stats();

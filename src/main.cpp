@@ -73,11 +73,13 @@ int main(int argc, char* argv[]) {
     SimResultSumModel sim_result_sum;
 
     ArchiveModel sim_archive_model;
+    OptimizationResultModel opt_archive_model;
 
     SimResultModel sim_result_model(&selected_metric_model,
                                     &selected_category_model,
                                     &sim_result_sum,
-                                    &sim_archive_model);
+                                    &sim_archive_model,
+                                    &opt_archive_model);
 
 
     qDebug() << "Models constructed";
@@ -111,6 +113,7 @@ int main(int argc, char* argv[]) {
     register_as(&sim_result_model, "sim_result_model");
     register_as(&sim_result_sum, "sim_result_sum_model");
     register_as(&sim_archive_model, "archive_model");
+    register_as(&opt_archive_model, "opt_archive_model");
 
     qDebug() << "Models installed";
 

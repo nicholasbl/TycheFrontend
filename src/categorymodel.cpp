@@ -93,21 +93,55 @@ void SelectedCategoryModel::set_maximum_investment(
     emit maximum_investment_changed();
 }
 
+QVariant SelectedCategoryModel::get_ui_data(int row, QString name) {
+    auto source_index = mapToSource(index(row, 0));
+
+    auto* h = qobject_cast<CategoryModel*>(sourceModel());
+    return h->get_ui_data(source_index.row(), name);
+}
+
 void SelectedCategoryModel::recompute_stats() {
     qDebug() << Q_FUNC_INFO;
     constexpr int role = role_for_member(&CategoryRecord::investment);
+    constexpr int optrole = role_for_member(&CategoryRecord::opt_limit);
 
     qDebug() << Q_FUNC_INFO << "Role is" << role << m_host->roleNames();
 
     quint64 max = 0;
 
+    quint64 funds_used = 0;
+
     for (int i = 0; i < rowCount(); i++) {
         auto d = data(index(i, 0), role).toULongLong();
         max    = std::max(d, max);
+
+        auto item_used = data(index(i, 0), optrole).toLongLong();
+
+        if (item_used > 0) { funds_used += item_used; }
+
         qDebug() << Q_FUNC_INFO << "Item is" << d;
     }
 
     qDebug() << Q_FUNC_INFO << "Max is" << max;
 
     set_maximum_investment(max);
+    set_opt_funds_used(funds_used);
+}
+
+qint64 SelectedCategoryModel::opt_funds_used() const {
+    return m_opt_funds_used;
+}
+
+void SelectedCategoryModel::set_opt_funds_used(qint64 newOpt_funds_used) {
+    if (m_opt_funds_used == newOpt_funds_used) return;
+    m_opt_funds_used = newOpt_funds_used;
+    emit opt_funds_used_changed();
+}
+
+void SelectedCategoryModel::reset_all_opts() {
+    constexpr int optrole = role_for_member(&CategoryRecord::opt_limit);
+
+    for (int i = 0; i < rowCount(); i++) {
+        setData(index(i, 0), -1, optrole);
+    }
 }

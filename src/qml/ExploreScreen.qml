@@ -12,9 +12,6 @@ FlowScreen {
 
     show_footer_continue: false
 
-    property bool in_edit_mode: side_bar.edit_mode === 0
-    property bool in_optim_mode: side_bar.edit_mode === 1
-
     onTool_button_clicked: settings_pop.open()
     enable_tool_button: true
 
@@ -80,7 +77,7 @@ FlowScreen {
                             width: grid_view.column_width
                             height: grid_view.row_height
 
-                            enable_editing: root.in_optim_mode
+                            enable_editing: false
                         }
                     }
                 }
@@ -96,8 +93,8 @@ FlowScreen {
                             height: grid_view.row_height
                             width: grid_view.column_width
 
-                           in_edit_mode: root.in_edit_mode
-                           in_opt_mode:  root.in_optim_mode
+                           in_edit_mode: true
+                           in_opt_mode:  false
                         }
                     }
                 }
@@ -140,8 +137,8 @@ FlowScreen {
                                     text: loader.icon_string("\ue4c2 ") + Util.format_money(sim_result_model.opt_portfolio_amount)
                                     textFormat: EditLabel.RichText
 
-                                    visible: in_optim_mode
-                                    editable: in_optim_mode
+                                    visible: false
+                                    editable: false
 
                                     Layout.alignment: Qt.AlignLeft
                                     Layout.leftMargin: 5

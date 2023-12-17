@@ -111,16 +111,18 @@ void SimResultModel::replace_cells(QVector<Cell> new_cells) {
     recompute_total_value();
 }
 
-SimResultModel::SimResultModel(SelectedMetricModel*   m,
-                               SelectedCategoryModel* c,
-                               SimResultSumModel*     sum,
-                               ArchiveModel*          ar,
-                               QObject*               parent)
+SimResultModel::SimResultModel(SelectedMetricModel*     m,
+                               SelectedCategoryModel*   c,
+                               SimResultSumModel*       sum,
+                               ArchiveModel*            ar,
+                               OptimizationResultModel* oar,
+                               QObject*                 parent)
     : QAbstractTableModel(parent),
       m_metrics(m),
       m_categories(c),
       m_sim_sum_model(sum),
-      m_archive_model(ar) {
+      m_archive_model(ar),
+      m_opt_archive_model(oar) {
 
     m_all_cell_stats = { 0, 1 };
 
@@ -302,11 +304,6 @@ void SimResultModel::load_data_from(RunArchive const& archive) {
 
     auto const& result = archive.run_result;
 
-    if (!result.opt_metric_id.isEmpty()) {
-        set_optimize_target_metric_id(result.opt_metric_id);
-    } else if (auto p = m_metrics->get_at(0); p) {
-        set_optimize_target_metric_id(p->id);
-    }
 
     // resize
     QVector<Cell> new_cells(m_metrics->rowCount() * m_categories->rowCount());
@@ -317,30 +314,13 @@ void SimResultModel::load_data_from(RunArchive const& archive) {
     }
 
     auto& main_cat = *m_categories->host();
-    auto& main_met = *m_metrics->host();
+    // auto& main_met = *m_metrics->host();
 
     main_cat.update_all([&](CategoryRecord& r, int) {
-        auto value   = result.category_limits.value(r.id);
-        r.investment = value.value;
-        r.opt_limit  = value.limit;
-        qDebug() << "Loading up cat opt" << r.investment << r.opt_limit;
+        auto value   = result.category_states.value(r.id);
+        r.investment = value;
+        qDebug() << "Loading up cat opt" << r.investment;
     });
-
-    main_met.update_all([&](MetricRecord& r, int) {
-        r.bound_type  = "";
-        r.optim_value = 0;
-
-        auto iter = result.metric_limits.find(r.id);
-
-        if (iter != result.metric_limits.end()) {
-            qDebug() << "CAN UPDATE METRIC" << iter.value().sense
-                     << iter.value().limit;
-            r.bound_type  = iter.value().sense;
-            r.optim_value = iter.value().limit;
-        }
-    });
-
-    setOptimize_target_sense(result.opt_sense);
 
     // TODO: replace with two models; one for data, second for a filtered table.
 
@@ -379,6 +359,40 @@ void SimResultModel::load_data_from(RunArchive const& archive) {
     }
 
     replace_cells(new_cells);
+}
+
+void SimResultModel::load_from(AskRunOptimResult const& result) {
+    if (!result.opt_metric_id.isEmpty()) {
+        set_optimize_target_metric_id(result.opt_metric_id);
+    } else if (auto p = m_metrics->get_at(0); p) {
+        set_optimize_target_metric_id(p->id);
+    }
+
+    auto& main_cat = *m_categories->host();
+    auto& main_met = *m_metrics->host();
+
+    main_cat.update_all([&](CategoryRecord& r, int) {
+        auto value   = result.category_limits.value(r.id);
+        r.investment = value.value;
+        r.opt_limit  = value.limit;
+        qDebug() << "Loading up cat opt" << r.investment << r.opt_limit;
+    });
+
+    main_met.update_all([&](MetricRecord& r, int) {
+        r.bound_type  = "";
+        r.optim_value = 0;
+
+        auto iter = result.metric_limits.find(r.id);
+
+        if (iter != result.metric_limits.end()) {
+            qDebug() << "CAN UPDATE METRIC" << iter.value().sense
+                     << iter.value().limit;
+            r.bound_type  = iter.value().sense;
+            r.optim_value = iter.value().limit;
+        }
+    });
+
+    setOptimize_target_sense(result.opt_sense);
 }
 
 void SimResultModel::clear() {
@@ -442,10 +456,11 @@ void SimResultModel::ask_run_optimize() {
         };
     }
 
-    m_archive_model->ask_run_optimize(state,
-                                      m_current_scenario,
-                                      m_metrics->host()->selected_indices(),
-                                      m_categories->host()->selected_indices());
+    m_opt_archive_model->ask_run_optimize(
+        state,
+        m_current_scenario,
+        m_metrics->host()->selected_indices(),
+        m_categories->host()->selected_indices());
 }
 
 void SimResultModel::ask_save_image(QImage image) {
@@ -503,6 +518,7 @@ qint64 SimResultModel::opt_portfolio_amount() const {
 
 void SimResultModel::set_opt_portfolio_amount(qint64 newOpt_portfolio_amount) {
     if (m_opt_portfolio_amount == newOpt_portfolio_amount) return;
+    m_categories->reset_all_opts();
     m_opt_portfolio_amount = newOpt_portfolio_amount;
     emit opt_portfolio_amount_changed();
 }

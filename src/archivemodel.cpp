@@ -86,46 +86,6 @@ void ArchiveModel::ask_run_scenario(AskRunScenario state,
             });
 }
 
-void ArchiveModel::ask_run_optimize(AskRunOptim    state,
-                                    ScenarioRecord scenario,
-                                    QSet<QString>  selected_metrics,
-                                    QSet<QString>  selected_categories) {
-    // qDebug() << Q_FUNC_INFO;
-
-    auto this_id = next_counter();
-
-    auto* method = JSONRpcMethod::invoke("optimize_scenario",
-                                         QJsonArray() << to_json(state));
-
-    connect(method,
-            &JSONRpcMethod::request_system_error,
-            this,
-            &ArchiveModel::sim_system_failure);
-    connect(method,
-            &JSONRpcMethod::request_exception,
-            this,
-            &ArchiveModel::sim_exception);
-
-    connect(method, &JSONRpcMethod::request_success, this, [=](QJsonValue doc) {
-        // qDebug() << doc;
-        AskRunResult new_sim_data;
-        from_json(doc, new_sim_data);
-        auto new_run = RunArchive {
-            .archive_name = QString("%1 (%2)").arg(scenario.name).arg(this_id),
-            .type         = "Optimization",
-            .scenario     = scenario,
-            .time_date    = QDateTime::currentDateTime(),
-            .run_result   = std::move(new_sim_data),
-            .selected_metrics    = selected_metrics,
-            .selected_categories = selected_categories,
-        };
-
-        this->append(new_run);
-
-        emit this->new_run_ready();
-    });
-}
-
 void ArchiveModel::select_run(int index) {
     if (index < 0) {
         // do nothing for now
@@ -170,4 +130,98 @@ void ArchiveModel::ask_save_data(int record_id) {
     auto filename = QString("%1.json").arg(record_ptr->archive_name);
 
     QFileDialog::saveFileContent(data_to_disk, filename);
+}
+
+// ==============================================
+
+
+OptimizationResultModel::OptimizationResultModel(QObject* p)
+    : QObject(p),
+      m_cat_result(new CategoryResultModel(this)),
+      m_met_result(new MetricResultModel(this)) { }
+
+void OptimizationResultModel::ask_run_optimize(
+    AskRunOptim    state,
+    ScenarioRecord scenario,
+    QSet<QString>  selected_metrics,
+    QSet<QString>  selected_categories) {
+    // This needs to be moved to an optimize module, but we are hacking it for
+    // now
+
+    // auto this_id = next_counter();
+
+    auto* method = JSONRpcMethod::invoke("optimize_scenario",
+                                         QJsonArray() << to_json(state));
+
+    connect(method,
+            &JSONRpcMethod::request_system_error,
+            this,
+            &OptimizationResultModel::sim_system_failure);
+    connect(method,
+            &JSONRpcMethod::request_exception,
+            this,
+            &OptimizationResultModel::sim_exception);
+
+    connect(method,
+            &JSONRpcMethod::request_success,
+            this,
+            [=, this](QJsonValue doc) {
+                this->on_result(
+                    doc, scenario, selected_metrics, selected_categories);
+            });
+}
+
+CategoryResultModel* OptimizationResultModel::cat_result() {
+    return m_cat_result;
+}
+MetricResultModel* OptimizationResultModel::met_result() {
+    return m_met_result;
+}
+
+void OptimizationResultModel::on_result(QJsonValue     doc,
+                                        ScenarioRecord scenario,
+                                        QSet<QString>  selected_metrics,
+                                        QSet<QString>  selected_categories) {
+    qDebug() << Q_FUNC_INFO << doc;
+
+    // qDebug() << doc;
+    AskRunOptimResult new_sim_data;
+    from_json(doc, new_sim_data);
+
+    m_cat_result->replace();
+    m_met_result->replace();
+
+    for (auto iter = new_sim_data.metric_limits.begin();
+         iter != new_sim_data.metric_limits.end();
+         ++iter) {
+
+        auto item = std::find_if(
+            scenario.metrics.begin(),
+            scenario.metrics.end(),
+            [&](MetricRecord const& p) { return p.id == iter.key(); });
+
+        if (item == scenario.metrics.end()) { continue; }
+
+        m_met_result->append(MetricResult {
+            .name  = item->name,
+            .value = iter->value,
+        });
+    }
+
+    for (auto iter = new_sim_data.category_limits.begin();
+         iter != new_sim_data.category_limits.end();
+         ++iter) {
+
+        auto item = std::find_if(
+            scenario.categories.begin(),
+            scenario.categories.end(),
+            [&](CategoryRecord const& p) { return p.id == iter.key(); });
+
+        if (item == scenario.categories.end()) { continue; }
+
+        m_cat_result->append(CategoryResult {
+            .name  = item->name,
+            .value = float(iter->value),
+        });
+    }
 }
