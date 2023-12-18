@@ -46,7 +46,11 @@
         <file>qml/ArchiveExplorePopup.qml</file>
         <file>qml/PortfolioOptPop.qml</file>
         <file>qml/SettingsPopup.qml</file>
-        <file>qml/NewOptimPop.qml</file>
+        <file>qml/OptimizationView.qml</file>
         <file>qml/SpiderPlot.qml</file>
+        <file>qml/SimulateView.qml</file>
+        <file>qml/OptimizeSideBar.qml</file>
+        <file>qml/OptInputPane.qml</file>
+        <file>qml/OptOutputPane.qml</file>
     </qresource>
 </RCC>

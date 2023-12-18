@@ -49,7 +49,7 @@ Item {
                 let center_x = width / 2
                 let center_y = height / 2
 
-                console.log("CENTER", center_x, center_y)
+                //console.log("CENTER", center_x, center_y)
 
                 let ret = []
 
@@ -63,7 +63,7 @@ Item {
                     ret.push([ center_x + x, center_y + y ])
                 }
 
-                console.log("HERE", ret)
+                //console.log("HERE", ret)
 
                 return ret;
             }
@@ -111,7 +111,7 @@ Item {
             ShapePath {
                 id: shape_path
                 fillColor: root.fill_color
-                strokeColor: "black"
+                strokeColor: Util.color_with_alpha(Qt.black, .5)
                 startX: 0; startY: 0
                 PathSvg {
                     path: center_shape.make_lines_svg(shape_path)
@@ -134,7 +134,8 @@ Item {
                 width: 5
                 height: width
                 radius: width / 2
-                color: Util.color_with_alpha(Material.foreground, .8)
+                border.color: Material.foreground
+                opacity: .5
             }
 
             Rectangle {

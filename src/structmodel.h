@@ -138,6 +138,9 @@ public:
 
 public slots:
     QVariant get_ui_data(int row, QString name);
+
+signals:
+    void content_changed();
 };
 
 template <class Record>
@@ -221,6 +224,7 @@ public:
         if (!ok) return false;
 
         emit dataChanged(index, index, QList<int>() << role);
+        emit content_changed();
         return true;
     }
 
@@ -250,15 +254,17 @@ public:
         beginRemoveRows(QModelIndex(), 0, std::max(rowCount() - 1, 0));
         m_records.clear();
         endRemoveRows();
+        emit content_changed();
     }
 
     void reset(QList<Record> new_records = {}) {
         beginResetModel();
         m_records = new_records;
         endResetModel();
+        emit content_changed();
     }
 
-    Record* get_at(int i) {
+    Record const* get_at(int i) const {
         if (i < 0) return nullptr;
         if (i >= m_records.size()) return nullptr;
         return &m_records[i];
@@ -269,6 +275,7 @@ public:
         beginInsertRows({}, rc, rc);
         m_records << r;
         endInsertRows();
+        emit content_changed();
     }
 
     auto append(QVector<Record> r) {
@@ -277,6 +284,7 @@ public:
         beginInsertRows({}, rc, rc + r.size() - 1);
         m_records << r;
         endInsertRows();
+        emit content_changed();
     }
 
     auto replace(QVector<Record> r = {}) {
@@ -291,6 +299,7 @@ public:
         beginRemoveRows(QModelIndex(), i, i);
         m_records.remove(i);
         endRemoveRows();
+        emit content_changed();
     }
 
     bool set_at(int i, Record const& r) {
@@ -303,6 +312,7 @@ public:
         auto right = index(i, columnCount() - 1);
 
         emit dataChanged(left, right);
+        emit content_changed();
         return true;
     }
 
@@ -314,6 +324,7 @@ public:
             f(r);
             set_at(i, r);
         }
+        emit content_changed();
     }
 
     template <class Function>
@@ -328,6 +339,7 @@ public:
         auto right = index(rowCount() - 1, columnCount() - 1);
 
         emit dataChanged(left, right);
+        emit content_changed();
     }
 
     template <class Function>

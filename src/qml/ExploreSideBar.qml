@@ -180,15 +180,15 @@ TransparentPane {
                 Layout.fillWidth: true
                 onClicked: sim_result_model.ask_run_scenario()
             }
-            Button {
-                text: "Optimize"
-                Layout.fillWidth: true
-                onClicked: new_opt_pop.open()
+            // Button {
+            //     text: "Optimize"
+            //     Layout.fillWidth: true
+            //     onClicked: new_opt_pop.open()
 
-                NewOptimPop{
-                    id: new_opt_pop
-                }
-            }
+            //     NewOptimPop{
+            //         id: new_opt_pop
+            //     }
+            // }
         }
     }
 }

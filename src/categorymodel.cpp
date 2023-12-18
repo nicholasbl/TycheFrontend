@@ -105,7 +105,7 @@ void SelectedCategoryModel::recompute_stats() {
     constexpr int role = role_for_member(&CategoryRecord::investment);
     constexpr int optrole = role_for_member(&CategoryRecord::opt_limit);
 
-    qDebug() << Q_FUNC_INFO << "Role is" << role << m_host->roleNames();
+    // qDebug() << Q_FUNC_INFO << "Role is" << role << m_host->roleNames();
 
     quint64 max = 0;
 
@@ -119,10 +119,10 @@ void SelectedCategoryModel::recompute_stats() {
 
         if (item_used > 0) { funds_used += item_used; }
 
-        qDebug() << Q_FUNC_INFO << "Item is" << d;
+        // qDebug() << Q_FUNC_INFO << "Item is" << d;
     }
 
-    qDebug() << Q_FUNC_INFO << "Max is" << max;
+    // qDebug() << Q_FUNC_INFO << "Max is" << max;
 
     set_maximum_investment(max);
     set_opt_funds_used(funds_used);

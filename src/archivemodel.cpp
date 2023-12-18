@@ -116,7 +116,7 @@ void ArchiveModel::delete_all_runs() {
 
 
 void ArchiveModel::ask_save_data(int record_id) {
-    auto record_ptr = this->get_at(record_id);
+    auto record_ptr = const_cast<RunArchive*>(this->get_at(record_id));
 
     if (!record_ptr) return;
 
@@ -208,20 +208,18 @@ void OptimizationResultModel::on_result(QJsonValue     doc,
         });
     }
 
-    for (auto iter = new_sim_data.category_limits.begin();
-         iter != new_sim_data.category_limits.end();
-         ++iter) {
+    // we actually need to sort this to retain the same order as the selected
 
-        auto item = std::find_if(
-            scenario.categories.begin(),
-            scenario.categories.end(),
-            [&](CategoryRecord const& p) { return p.id == iter.key(); });
+    for (auto const& category_info : scenario.categories) {
 
-        if (item == scenario.categories.end()) { continue; }
+        auto cat_limit_iter =
+            new_sim_data.category_limits.find(category_info.id);
+
+        if (cat_limit_iter == new_sim_data.category_limits.end()) { continue; }
 
         m_cat_result->append(CategoryResult {
-            .name  = item->name,
-            .value = float(iter->value),
+            .name  = category_info.name,
+            .value = float(cat_limit_iter->value),
         });
     }
 }

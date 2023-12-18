@@ -73,10 +73,28 @@ Page {
                 help_tip.open()
             }
 
-            ToolTip {
+            Popup {
                 id: help_tip
-                text: help_text
-                timeout: 10000
+                margins: 1
+
+                width: 300
+
+                Label {
+                    anchors.fill: parent
+                    text: help_text
+                    wrapMode: Label.WrapAtWordBoundaryOrAnywhere
+                }
+
+                onOpened: {
+                    close_timer.start()
+                }
+
+                Timer {
+                    id: close_timer
+                    interval: 10000
+
+                    onTriggered: help_tip.close()
+                }
             }
         }
 
