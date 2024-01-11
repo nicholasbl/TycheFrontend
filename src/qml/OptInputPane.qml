@@ -53,12 +53,38 @@ TransparentPane {
                     height: delegate_layout.implicitHeight + 10
 
                     radius: 10
-                    background_color:  Constants.get_tinted_color(index, Material.background, .75, .50)
+
+                    property bool is_enabled : opt_limit >= 0
+
+                    background_opacity: .5
+
+                    background_color: {
+                        if (is_enabled){
+                            return Constants.get_tinted_color(index, Material.background, .75, 1)
+                        } else {
+                            return Material.backgroundDimColor
+                        }
+                    }
 
                     RowLayout {
                         id: delegate_layout
                         anchors.fill: parent
                         anchors.margins: 5
+
+                        CheckBox {
+                            checked: is_enabled
+
+                            onClicked: {
+                                if (checked) {
+                                    //check
+                                    opt_limit = 0
+                                } else {
+                                    // uncheck
+                                    opt_limit = -1
+                                }
+                            }
+                        }
+
                         Label {
                             Layout.preferredWidth: delegate_root.width / 4
                             text: name
@@ -73,7 +99,7 @@ TransparentPane {
 
                             value: opt_limit
 
-                            enabled: sim_result_model.opt_portfolio_amount > 0
+                            enabled: sim_result_model.opt_portfolio_amount > 0 && is_enabled
 
                             onMoved: {
                                 opt_limit = value
@@ -84,6 +110,7 @@ TransparentPane {
                             Layout.preferredWidth: 64
                             text: Util.format_money(opt_limit)
                             font.bold: true
+                            enabled: is_enabled
                         }
                     }
                 }

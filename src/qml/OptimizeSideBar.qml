@@ -113,7 +113,11 @@ TransparentPane {
 
                         // pull out any mulipliers...
                         if (matches.length > 2){
-                            var last = matches[2].toLowerCase()
+                            var last = ''
+                            if (matches[2]) {
+                                last = matches[2].toLowerCase()
+                            }
+
 
                             if (last === 'k') {
                                 val *= 1E3
