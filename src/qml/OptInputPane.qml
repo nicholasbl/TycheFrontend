@@ -15,14 +15,61 @@ TransparentPane {
             Layout.fillHeight: true
 
             RowLayout {
-                Label {
-                    text: "Remaining funds:"
-                    font.bold: true
+                Layout.fillWidth: true
+                Layout.columnSpan: 2
+
+                TextField {
+                    id: portfolio_limit_text
+                    Layout.fillWidth: true
+                    placeholderText: "Individual Investment Limit"
+                    text: Util.format_money(sim_result_model.opt_portfolio_amount)
+
+                    font.pointSize: 16
+
+                    onAccepted:  {
+                        if (text.length === 0) {
+                            return
+                        }
+
+                        var regexp = /\$?(\d+\.?\d*)\s*([kmb])?/i
+
+                        var matches = regexp.exec(text)
+
+                        console.log(text, matches)
+
+                        // this finds the first int it can get
+                        var val = parseFloat(matches[1])
+
+                        // pull out any mulipliers...
+                        if (matches.length > 2){
+                            var last = ''
+                            if (matches[2]) {
+                                last = matches[2].toLowerCase()
+                            }
+
+
+                            if (last === 'k') {
+                                val *= 1E3
+                            } else if (last === 'm') {
+                                val *= 1E6
+                            } else if (last === 'b') {
+                                val *= 1E9
+                            }
+                        }
+
+                        sim_result_model.opt_portfolio_amount = val
+                    }
                 }
-                Label {
-                    text: Util.format_money(investment_sliders.funds_left)
-                    font.bold: true
-                    font.pointSize: 18
+
+                RoundButton {
+                    text: "\uf522"
+                    font: loader.font
+                    flat: true
+
+                    onClicked: {
+                        // pick a nice random value between the max opt amount, and something larger than zero
+                        sim_result_model.opt_portfolio_amount = Math.random() * sim_result_model.max_opt_portfolio_amount + 10000
+                    }
                 }
             }
 
@@ -41,8 +88,6 @@ TransparentPane {
 
                 clip: true
 
-                property real funds_left : sim_result_model.opt_portfolio_amount - selected_category_model.opt_funds_used
-
                 model: selected_category_model
 
                 spacing: 5
@@ -59,10 +104,16 @@ TransparentPane {
                     background_opacity: .5
 
                     background_color: {
+                        var tinted = Constants.get_tinted_color(index, Material.background, .75, 1)
                         if (is_enabled){
-                            return Constants.get_tinted_color(index, Material.background, .75, 1)
+                            return tinted
                         } else {
-                            return Material.backgroundDimColor
+                            return Qt.tint(
+                                        tinted,
+                                        Util.color_with_alpha(
+                                            Material.backgroundDimColor, .75
+                                            )
+                                        )
                         }
                     }
 
@@ -73,6 +124,8 @@ TransparentPane {
 
                         CheckBox {
                             checked: is_enabled
+
+                            enabled: sim_result_model.opt_portfolio_amount > 0
 
                             onClicked: {
                                 if (checked) {
@@ -95,7 +148,7 @@ TransparentPane {
                             id: invest_limit
                             Layout.fillWidth: true
                             from: 0
-                            to: opt_limit + investment_sliders.funds_left
+                            to: sim_result_model.opt_portfolio_amount
 
                             value: opt_limit
 
@@ -108,7 +161,7 @@ TransparentPane {
 
                         Label {
                             Layout.preferredWidth: 64
-                            text: Util.format_money(opt_limit)
+                            text: Util.format_money(opt_limit < 0 ? 0 : opt_limit)
                             font.bold: true
                             enabled: is_enabled
                         }
@@ -123,18 +176,31 @@ TransparentPane {
             Layout.preferredWidth: 180
             fill_color: Util.color_with_alpha(Material.accentColor, .5)
 
-            values: {
-                selected_category_model.opt_funds_used
-                sim_result_model.opt_portfolio_amount
+            function rebuild() {
+                //sim_result_model.opt_portfolio_amount
 
-                let ret = []
+                model.clear()
 
-                for (let i = 0; i < selected_metric_model.rowCount(); i++) {
-                    ret.push(selected_category_model.get_ui_data(i, "opt_limit"))
+                for (let i = 0; i < selected_category_model.rowCount(); i++) {
+                    var v = {
+                        "label": selected_category_model.get_ui_data(i, "name"),
+                        "value": selected_category_model.get_ui_data(i, "opt_limit")
+                    }
+
+                    //console.log("HERE:", v.label, v.value)
+
+                    model.append(v)
                 }
 
-                return ret
+                return true
             }
+
+            Component.onCompleted: {
+                selected_category_model.content_changed.connect(function(){
+                    rebuild()
+                })
+            }
+
         }
     }
 }
