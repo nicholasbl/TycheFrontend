@@ -82,6 +82,16 @@ FlowScreen {
             failure_reason.text = "Unable to complete request: <b>" + err_str + "</b>."
             sim_fail_pop.open()
         })
+
+        opt_archive_model.sim_system_failure.connect(function(err_str){
+            failure_reason.text = "An error occurred while executing the request. The reason given was: <b>" + err_str + "</b>. You can try again; if the issue persists, please contact the relevant administrators."
+            sim_fail_pop.open()
+        })
+
+        opt_archive_model.sim_exception.connect(function(err_str){
+            failure_reason.text = "Unable to complete request: <b>" + err_str + "</b>."
+            sim_fail_pop.open()
+        })
     }
 
     footer: TransparentRectangle {

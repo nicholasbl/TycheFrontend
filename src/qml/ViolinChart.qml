@@ -20,6 +20,10 @@ Item {
     // Computed to give us the outline
     property var line_points: {
 
+        if (Math.abs(data_global_max - data_global_min) < .0000001) {
+            return []
+        }
+
         let data_max = line_array[0]
         let data_min = line_array[0]
         {
@@ -48,13 +52,18 @@ Item {
 
         // lower part
         for (i = line_array.length - 1; i >= 0 ; i--) {
-            ret.push( [ret[i][0] + 0, ret[i][1] * -1 + height] )
+            //print(ret[i][1], ret[i][1] * -1, ret[i][1] * -1 + height)
+            ret.push( [ret[i][0] + 0, -ret[i][1] + height] )
         }
 
         return ret;
     }
 
     function make_lines_svg(host) {
+        if (line_points.length === 0) {
+            return ""
+        }
+
         var ret = ""
         host.startX = line_points[0][0]
         host.startY = line_points[0][1]
@@ -62,7 +71,7 @@ Item {
         // we go over the length and use a mod to close off this path
         for (let i = 1; i < line_points.length + 1; i++) {
             var pos = line_points[i % line_points.length]
-            ret += "L " + pos[0] + " " + pos[1]
+            ret += " L " + pos[0] + " " + pos[1]
         }
 
         ret += " z"

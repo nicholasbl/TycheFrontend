@@ -122,7 +122,11 @@ SimResultModel::SimResultModel(SelectedMetricModel*     m,
       m_categories(c),
       m_sim_sum_model(sum),
       m_archive_model(ar),
-      m_opt_archive_model(oar) {
+      m_opt_archive_model(oar),
+      m_total_value(0),
+      m_opt_portfolio_amount(0),
+      m_max_opt_portfolio_amount(0),
+      m_optimize_target_sense("max") {
 
     m_all_cell_stats = { 0, 1 };
 
@@ -257,16 +261,6 @@ void SimResultModel::recompute_total_value() {
     set_total_value(sum);
 }
 
-QVector<float> SimResultModel::get_all_cell_stats() const {
-    return m_all_cell_stats;
-}
-
-void SimResultModel::set_all_cell_stats(QVector<float> newAll_cell_stats) {
-    if (m_all_cell_stats == newAll_cell_stats) return;
-    m_all_cell_stats = newAll_cell_stats;
-    emit all_cell_stats_changed();
-}
-
 void SimResultModel::set_current_scenario(ScenarioRecord record) {
     if (record.uuid == m_current_scenario.uuid) return;
 
@@ -392,7 +386,7 @@ void SimResultModel::load_from(AskRunOptimResult const& result) {
         }
     });
 
-    setOptimize_target_sense(result.opt_sense);
+    set_optimize_target_sense(result.opt_sense);
 }
 
 void SimResultModel::clear() {
@@ -448,11 +442,14 @@ void SimResultModel::ask_run_optimize() {
     }
 
     for (auto const& c : *category_list) {
-        auto limit = c.opt_limit > 0 ? c.opt_limit : opt_portfolio_amount();
+        // -1 means the user has not selected this category
+        if (c.opt_limit < 0) continue;
+
+        // zero is a valid input for the optimizer
 
         state.category_states << AskRunOptimCategory {
             .category_id = c.id,
-            .value       = limit,
+            .value       = c.opt_limit,
         };
     }
 
@@ -480,89 +477,3 @@ void SimResultModel::ask_save_image(QImage image) {
 
 SimResultSumModel::SimResultSumModel(QObject* parent)
     : StructTableModel(parent) { }
-
-bool SimResultModel::edited() const {
-    return m_edited;
-}
-
-void SimResultModel::setEdited(bool newEdited) {
-    if (m_edited == newEdited) return;
-    m_edited = newEdited;
-    emit editedChanged();
-}
-
-qint64 SimResultModel::total_value() const {
-    return m_total_value;
-}
-
-void SimResultModel::set_total_value(qint64 newTotal_value) {
-    if (m_total_value == newTotal_value) return;
-    m_total_value = newTotal_value;
-    emit total_value_changed();
-}
-
-QString SimResultModel::current_scenario_name() const {
-    return m_current_scenario_name;
-}
-
-void SimResultModel::set_current_scenario_name(
-    const QString& newCurrent_scenario_name) {
-    if (m_current_scenario_name == newCurrent_scenario_name) return;
-    m_current_scenario_name = newCurrent_scenario_name;
-    emit current_scenario_name_changed();
-}
-
-qint64 SimResultModel::opt_portfolio_amount() const {
-    return m_opt_portfolio_amount;
-}
-
-void SimResultModel::set_opt_portfolio_amount(qint64 newOpt_portfolio_amount) {
-    if (m_opt_portfolio_amount == newOpt_portfolio_amount) return;
-    m_categories->reset_all_opts();
-    m_opt_portfolio_amount = newOpt_portfolio_amount;
-    emit opt_portfolio_amount_changed();
-}
-
-qint64 SimResultModel::max_opt_portfolio_amount() const {
-    return m_max_opt_portfolio_amount;
-}
-
-void SimResultModel::set_max_opt_portfolio_amount(
-    qint64 newMax_opt_portfolio_amount) {
-    if (m_max_opt_portfolio_amount == newMax_opt_portfolio_amount) return;
-    m_max_opt_portfolio_amount = newMax_opt_portfolio_amount;
-    emit opt_max_portfolio_amount_changed();
-}
-
-QString SimResultModel::optimize_target_metric_id() const {
-    return m_optimize_target_metric_id;
-}
-
-void SimResultModel::set_optimize_target_metric_id(
-    const QString& newOptimize_target_metric_id) {
-    qDebug() << Q_FUNC_INFO << newOptimize_target_metric_id;
-    if (m_optimize_target_metric_id == newOptimize_target_metric_id) return;
-    m_optimize_target_metric_id = newOptimize_target_metric_id;
-    emit optimize_target_metric_id_changed();
-}
-
-QVector<float> SimResultModel::metric_summary() const {
-    return m_metric_summary;
-}
-
-void SimResultModel::set_metric_summary(
-    const QVector<float>& newMetric_summary) {
-    if (m_metric_summary == newMetric_summary) return;
-    m_metric_summary = newMetric_summary;
-    emit metric_summary_changed();
-}
-QString SimResultModel::optimize_target_sense() const {
-    return m_optimize_target_sense;
-}
-
-void SimResultModel::setOptimize_target_sense(
-    const QString& newOptimize_target_sense) {
-    if (m_optimize_target_sense == newOptimize_target_sense) return;
-    m_optimize_target_sense = newOptimize_target_sense;
-    emit optimize_target_senseChanged();
-}

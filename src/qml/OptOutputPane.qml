@@ -86,22 +86,28 @@ TransparentPane {
             Layout.preferredWidth: 180
             fill_color: Util.color_with_alpha(Material.accentColor, .5)
 
-            function make_values() {
+            function rebuild() {
                 let source = opt_archive_model.cat_result()
                 let ret = []
 
+                model.clear()
+
                 for (let i = 0; i < cat_view.count; i++) {
-                    ret.push(cat_view.model.get_ui_data(i, "value"))
+                    var v = {
+                        "label" : cat_view.model.get_ui_data(i, "name"),
+                        "value" : cat_view.model.get_ui_data(i, "value")
+                    }
+
+                    model.append(v)
                 }
 
-                return ret
             }
 
-            values: make_values()
+            //values: make_values()
 
             Component.onCompleted: {
                 opt_archive_model.cat_result().content_changed.connect(function(){
-                    values = make_values()
+                    rebuild()
                 })
             }
 

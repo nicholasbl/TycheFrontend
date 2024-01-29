@@ -21,6 +21,7 @@ FlowScreen {
             Layout.margins: 10
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.horizontalStretchFactor: 1
 
             ColumnLayout {
                 anchors.fill: parent
@@ -32,7 +33,7 @@ FlowScreen {
                     Layout.fillWidth: true
                 }
                 Label {
-                    text: "A description of metrics is here, and why you should care"
+                    text: "First select metrics to evaluate"
                     wrapMode: Text.WordWrap
                     Layout.fillWidth: true
                 }
@@ -69,6 +70,7 @@ FlowScreen {
             Layout.margins: 10
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.horizontalStretchFactor: 1
 
             ColumnLayout {
                 anchors.fill: parent
@@ -80,7 +82,7 @@ FlowScreen {
                     Layout.fillWidth: true
                 }
                 Label {
-                    text: "A description of technologies is here, and why you should care"
+                    text: "Now select a number of technologies to explore"
                     wrapMode: Text.WordWrap
                     Layout.fillWidth: true
                 }

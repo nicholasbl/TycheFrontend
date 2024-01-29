@@ -1,33 +1,41 @@
 import QtQuick
 import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
-Image {
-    id: img
+Item {
+    id: root
+    property alias source: img.source
+
+    property alias autoTransform: img.autoTransform
+    property alias asynchronous: img.asynchronous
+    property alias cache: img.cache
+    property alias fillMode: img.fillMode
+    property alias mipmap: img.mipmap
+    property alias progress: img.progress
+    property alias status: img.status
     property int radius: 0
 
-    Text {
+    Image {
+        id: img
         anchors.fill: parent
-        text: "\uf059"
-        font.family: loader.font.family
-        font.pointSize: 92
-        fontSizeMode: Text.Fit
-        visible: img.status == Image.Error || img.status == Image.Null
-        horizontalAlignment: Qt.AlignHCenter
-        verticalAlignment: Qt.AlignVCenter
+        layer.enabled: true
+        visible: false
     }
 
-    layer.enabled: true
-    layer.effect: OpacityMask {
-        maskSource: Item {
-            width: img.width
-            height: img.height
-            Rectangle {
-                anchors.centerIn: parent
-                width: img.width
-                height: img.height
-                radius: img.radius
-            }
-        }
+    Rectangle {
+        id: mask
+        anchors.fill: parent
+        radius: root.radius
+        layer.enabled: true
     }
+
+    MultiEffect {
+        source: img
+        anchors.fill: parent
+        maskEnabled: true
+        maskSource: mask
+    }
+
 }
+
+

@@ -38,6 +38,7 @@ HEADERS += \
     categorymodel.h \
     metricmodel.h \
     networkcontroller.h \
+    qt_helpers.h \
     scenariomodel.h \
     simresultdata.h \
     simresultmodel.h \
