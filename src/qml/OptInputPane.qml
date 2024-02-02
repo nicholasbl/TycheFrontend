@@ -21,7 +21,7 @@ TransparentPane {
                 TextField {
                     id: portfolio_limit_text
                     Layout.fillWidth: true
-                    placeholderText: "Individual Investment Limit"
+                    placeholderText: "Total Investment Limit"
                     text: Util.format_money(sim_result_model.opt_portfolio_amount)
 
                     font.pointSize: 16
