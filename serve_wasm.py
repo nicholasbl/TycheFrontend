@@ -18,6 +18,17 @@ class CORSRequestHandler(SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Credentials', 'false')
         SimpleHTTPRequestHandler.end_headers(self)
 
+
+# Patch frontend html to add in env var to server
+
+new_host = os.environ.get('JSON_RPC_HOST', "http://localhost:8080")
+
+ifname = "TycheFront.html.prepatch"
+ofname = "TycheFront.html"
+html = open(ifname).read().replace("{JSON_RPC_HOST}", new_host)
+
+open(ofname,'w').write(html)
+
 with socketserver.TCPServer(("", PORT), CORSRequestHandler) as httpd:
     print("serving at port", PORT)
     httpd.serve_forever()

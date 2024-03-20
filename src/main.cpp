@@ -11,6 +11,11 @@
 #include "scenariomodel.h"
 #include "simresultmodel.h"
 
+#ifdef EMSCRIPTEN
+#    include <emscripten.h>
+#    include <emscripten/val.h>
+#endif
+
 void on_scenario_changed(ScenarioModel&  scenario_model,
                          MetricModel&    metric_model,
                          CategoryModel&  category_model,
@@ -37,6 +42,12 @@ int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
 
     JSONRpcMethod::set_default_host("http://localhost:8080");
+
+#ifdef EMSCRIPTEN
+    emscripten::val host = emscripten::val::global("json_rpc_host");
+    JSONRpcMethod::set_default_host(
+        QString::fromStdString(host.as<std::string>()));
+#endif
 
     QSurfaceFormat format;
     format.setSamples(4);

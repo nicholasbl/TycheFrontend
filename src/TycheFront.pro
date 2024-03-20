@@ -20,7 +20,8 @@ RESOURCES += \
 wasm {
     # optim for size
     QMAKE_CXXFLAGS_RELEASE -= -O2
-    QMAKE_CXXFLAGS_RELEASE += -Os
+    QMAKE_CXXFLAGS_RELEASE += -Os -oz -flto
+    QMAKE_LFLAGS_RELEASE += -flto
 } else {
     # only use sanitizers on desktop platforms
     CONFIG += sanitizer sanitize_address
