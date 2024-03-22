@@ -54,6 +54,12 @@ static bool is_valid(ScenarioRecord const& record) {
     return metrics_ok and cats_ok;
 }
 
+inline void fixup_record(ScenarioRecord& record) {
+    auto new_host = QUrl(JSONRpcMethod::default_host()).host();
+
+    record.image = record.image.replace(QStringLiteral("localhost"), new_host);
+}
+
 void ScenarioModel::new_scenario_list(QJsonValue result) {
     qDebug() << Q_FUNC_INFO;
 
@@ -64,8 +70,14 @@ void ScenarioModel::new_scenario_list(QJsonValue result) {
     // and we have no erase_if
     QVector<ScenarioRecord> ok_record_list;
 
+    // a lovely hack here to change host info for images
+    bool need_fixup = !JSONRpcMethod::default_host().contains("localhost");
+
     for (auto const& v : record_list) {
-        if (is_valid(v)) { ok_record_list << v; }
+        if (is_valid(v)) {
+            ok_record_list << v;
+            if (need_fixup) fixup_record(ok_record_list.back());
+        }
     }
 
     replace(ok_record_list);

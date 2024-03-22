@@ -21,7 +21,8 @@ class JSONRpcMethod : public QObject {
                   QNetworkAccessManager* parent);
 
 public:
-    static void set_default_host(QString);
+    static void    set_default_host(QString);
+    static QString default_host();
 
     static JSONRpcMethod* invoke(QString method_name);
     static JSONRpcMethod* invoke(QString method_name, QJsonObject param);

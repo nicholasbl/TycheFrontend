@@ -19,6 +19,10 @@ static QNetworkAccessManager* get_manager() {
     return network_manager.get();
 }
 
+QString JSONRpcMethod::default_host() {
+    return get_default_host();
+}
+
 void JSONRpcMethod::set_default_host(QString s) {
     qDebug() << "Setting RPC host to" << s;
     get_default_host() = s;
