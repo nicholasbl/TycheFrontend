@@ -54,17 +54,31 @@ static bool is_valid(ScenarioRecord const& record) {
     return metrics_ok and cats_ok;
 }
 
-inline void fixup_record(ScenarioRecord& record) {
-    auto new_host = QUrl(JSONRpcMethod::default_host()).host();
+inline void update_image(QString& url, QString const& new_host) {
+    auto LH = QStringLiteral("localhost");
+    auto LP = QStringLiteral("127.0.0.1");
 
-    record.image = record.image.replace(QStringLiteral("localhost"), new_host);
+    // qDebug() << Q_FUNC_INFO << url << url.contains(LH) << url.contains(LP);
+
+    if (!url.contains(LH) and !url.contains(LP)) { return; }
+
+    auto u       = QUrl(url);
+    auto new_url = QString("%1/%2").arg(new_host, u.path());
+    // qDebug() << Q_FUNC_INFO << new_url;
+    url = new_url;
+}
+
+inline void fixup_record(ScenarioRecord& record) {
+    auto new_host = JSONRpcMethod::default_image_host();
+
+    update_image(record.image, new_host);
 
     for (auto& cat : record.categories) {
-        cat.image = cat.image.replace(QStringLiteral("localhost"), new_host);
+        update_image(cat.image, new_host);
     }
 
     for (auto& met : record.metrics) {
-        met.image = met.image.replace(QStringLiteral("localhost"), new_host);
+        update_image(met.image, new_host);
     }
 }
 
@@ -79,7 +93,9 @@ void ScenarioModel::new_scenario_list(QJsonValue result) {
     QVector<ScenarioRecord> ok_record_list;
 
     // a lovely hack here to change host info for images
-    bool need_fixup = !JSONRpcMethod::default_host().contains("localhost");
+    bool need_fixup = !JSONRpcMethod::default_image_host().isEmpty();
+
+    qDebug() << "Need image fixup:" << need_fixup;
 
     for (auto const& v : record_list) {
         if (is_valid(v)) {

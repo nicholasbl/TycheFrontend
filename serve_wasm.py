@@ -22,10 +22,11 @@ class CORSRequestHandler(SimpleHTTPRequestHandler):
 # Patch frontend html to add in env var to server
 
 new_host = os.environ.get('JSON_RPC_HOST', "http://localhost:8080")
+new_img_host = os.environ.get('IMAGE_HOST', "http://localhost:8081")
 
 ifname = "TycheFront.html.prepatch"
 ofname = "TycheFront.html"
-html = open(ifname).read().replace("{JSON_RPC_HOST}", new_host)
+html = open(ifname).read().replace("{JSON_RPC_HOST}", new_host).replace("{IMAGE_HOST}", new_img_host)
 
 open(ofname,'w').write(html)
 

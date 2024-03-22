@@ -47,6 +47,10 @@ int main(int argc, char* argv[]) {
     emscripten::val host = emscripten::val::global("json_rpc_host");
     JSONRpcMethod::set_default_host(
         QString::fromStdString(host.as<std::string>()));
+
+    emscripten::val image_host = emscripten::val::global("image_host");
+    JSONRpcMethod::set_default_image_host(
+        QString::fromStdString(image_host.as<std::string>()));
 #endif
 
     QSurfaceFormat format;

@@ -24,6 +24,9 @@ public:
     static void    set_default_host(QString);
     static QString default_host();
 
+    static void    set_default_image_host(QString);
+    static QString default_image_host();
+
     static JSONRpcMethod* invoke(QString method_name);
     static JSONRpcMethod* invoke(QString method_name, QJsonObject param);
     static JSONRpcMethod* invoke(QString method_name, QJsonArray params);

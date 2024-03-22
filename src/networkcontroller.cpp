@@ -28,6 +28,20 @@ void JSONRpcMethod::set_default_host(QString s) {
     get_default_host() = s;
 }
 
+static QString& get_image_host() {
+    static QString host;
+    return host;
+}
+
+void JSONRpcMethod::set_default_image_host(QString s) {
+    qDebug() << "Setting image host to" << s;
+    get_image_host() = s;
+}
+
+QString JSONRpcMethod::default_image_host() {
+    return get_image_host();
+}
+
 JSONRpcMethod* JSONRpcMethod::invoke(QString method_name) {
     return new JSONRpcMethod(
         get_default_host(), method_name, QJsonDocument(), get_manager());

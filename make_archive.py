@@ -44,6 +44,7 @@ replacement = '''
 <div id=\"screen\"></div>
 <script type="text/javascript">
     json_rpc_host = "{JSON_RPC_HOST}"
+    image_host = "{IMAGE_HOST}"
 </script>
 '''
 
