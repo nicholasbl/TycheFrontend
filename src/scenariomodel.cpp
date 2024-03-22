@@ -58,6 +58,14 @@ inline void fixup_record(ScenarioRecord& record) {
     auto new_host = QUrl(JSONRpcMethod::default_host()).host();
 
     record.image = record.image.replace(QStringLiteral("localhost"), new_host);
+
+    for (auto& cat : record.categories) {
+        cat.image = cat.image.replace(QStringLiteral("localhost"), new_host);
+    }
+
+    for (auto& met : record.metrics) {
+        met.image = met.image.replace(QStringLiteral("localhost"), new_host);
+    }
 }
 
 void ScenarioModel::new_scenario_list(QJsonValue result) {
